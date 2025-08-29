@@ -1,0 +1,13 @@
+# Testing
+pytest
+pytest-cov
+
+# Juego
+pygame
+
+# Calidad de código
+flake8
+coverage
+
+# CI/CD y calidad (si lo pedía el profe)
+codeclimate-test-reporter
