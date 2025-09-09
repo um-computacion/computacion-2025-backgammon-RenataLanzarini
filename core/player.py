@@ -1,14 +1,14 @@
 class Jugador:
     def __init__(self, nombre: str, color: str):
-        self.__nombre__= nombre
-        self.__color__= color
-        self.__fichas_restantes__= 15 #para iniciar con 15
+        self.nombre = nombre
+        self.color = color
+        self._fichas_restantes = 15  
 
     def fichas_restantes(self) -> int:
-        return __fichas_restantes__
+        return self._fichas_restantes
 
     def perder_ficha(self):
-        if self.__fichas_restantes__ > 0:
-            self.__fichas_restantes__-= 1
+        if self._fichas_restantes > 0:
+            self._fichas_restantes -= 1
 
 
