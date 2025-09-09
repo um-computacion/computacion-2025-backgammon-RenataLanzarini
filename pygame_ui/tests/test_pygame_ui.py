@@ -1,7 +1,15 @@
-from pygame_ui.py import BackgammonUI
+import os
 
-def test_ui_inicia_juego():
-    ui= BackgammonUI()
+# Configuración para entornos sin pantalla (CI/headless)
+os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 
-    assert hasattr(ui, "_Backgammon__juego__")
+import pytest
+pygame = pytest.importorskip("pygame")
+
+from ui.pygame_ui import BackgammonUI
+
+def test_ui_posee_juego():
+    ui = BackgammonUI()
+    # La UI debe tener una instancia del juego
+    assert hasattr(ui, "juego")
     
