@@ -1,5 +1,8 @@
 from core.game import BackgammonJuego
 
 class BackgammonCLI:
-    def __init__(self): self.__juego__= BackgammonJuego
-    def iniciar(self): print("BIenvenido a BAckgammon (CLI). El juego esta listo.")
+    def __init__(self):
+        self.juego = BackgammonJuego()
+
+    def iniciar(self):
+        print("Bienvenido a Backgammon (CLI). El juego está listo.")

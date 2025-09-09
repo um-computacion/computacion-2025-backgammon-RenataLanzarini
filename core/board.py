@@ -8,16 +8,16 @@ class Tablero:
 
     def __init__(self):
         """Inicializa un tablero con 24 puntos vacíos."""
-        self.__puntos__ = [[] for _ in range(24)]
+        self._puntos = [[] for _ in range(24)]
 
     def contar_fichas(self) -> int:
         """Devuelve la cantidad total de fichas en el tablero."""
-        return sum(len(p) for p in self.__puntos__)
+        return sum(len(p) for p in self._puntos)
 
     def esta_vacio(self, indice: int) -> bool:
         """
         Devuelve True si un punto del tablero está vacío.
         """
-        return len(self.__puntos__[indice]) == 0
+        return len(self._puntos[indice]) == 0
 
         
