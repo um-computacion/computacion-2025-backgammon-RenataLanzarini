@@ -1,7 +1,7 @@
 from cli.cli import BackgammonCLI
 
-def test_cli_inicia_juego():
+def test_cli_posee_juego():
     cli = BackgammonCLI()
-
-    assert hasattr (cli, "_BAckgammon__juego__")
+    # El CLI debe tener una instancia del juego
+    assert hasattr(cli, "juego")
     
