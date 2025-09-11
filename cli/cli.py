@@ -6,3 +6,7 @@ class BackgammonCLI:
 
     def iniciar(self):
         print("Bienvenido a Backgammon (CLI). El juego está listo.")
+
+def ejecutar_cli():
+    cli = BackgammonCLI()
+    cli.iniciar()

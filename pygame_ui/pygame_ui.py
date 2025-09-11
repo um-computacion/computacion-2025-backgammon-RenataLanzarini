@@ -12,4 +12,7 @@ class BackgammonUI:
         self.pantalla.fill((255, 255, 255))
         pygame.display.flip()
         print("Backgammon (pygame UI) iniciado")
-        
+
+def ejecutar_pygame_ui():
+    ui = BackgammonUI()
+    ui.iniciar()      
