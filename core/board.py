@@ -20,4 +20,15 @@ class Tablero:
         """
         return len(self._puntos[indice]) == 0
 
-        
+    def puntos_ocupados(self) -> list[int]:
+        """Devuelve los índices de puntos que tienen al menos una ficha."""
+        return [i for i, p in enumerate(self._puntos) if p]
+
+    def reset(self):
+        """Vacía todas las fichas del tablero."""
+        self._puntos = [[] for _ in range(24)]
+
+    def __len__(self):
+        """Permite usar len(tablero) para obtener la cantidad total de fichas."""
+        return self.contar_fichas()
+      
