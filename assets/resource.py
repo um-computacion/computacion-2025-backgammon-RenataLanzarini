@@ -31,7 +31,7 @@ TITULO_VENTANA = "Backgammon - Interfaz Gráfica"
 NUM_PUNTOS = 24   # cantidad de puntos en el tablero
 FICHAS_POR_JUGADOR = 15
 
-# ⚙️ Configuración extendida de la ventana (nuevo)
+# ⚙️ Configuración extendida de la ventana 
 FPS = 60
 COLOR_FONDO = BLANCO
 ICONO_VENTANA = "assets/icon.png"
