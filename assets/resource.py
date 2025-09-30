@@ -35,3 +35,8 @@ FICHAS_POR_JUGADOR = 15
 FPS = 60
 COLOR_FONDO = BLANCO
 ICONO_VENTANA = "assets/icon.png"
+
+# 🔊 Configuración de sonido
+SONIDO_MOVIMIENTO = "assets/sounds/move.wav"
+SONIDO_VICTORIA = "assets/sounds/win.wav"
+VOLUMEN_GENERAL = 0.8
