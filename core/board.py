@@ -31,4 +31,15 @@ class Tablero:
     def __len__(self):
         """Permite usar len(tablero) para obtener la cantidad total de fichas."""
         return self.contar_fichas()
-      
+    
+    def fichas_en(self, indice: int) -> int:
+        """Devuelve cuántas fichas hay en un punto específico."""
+        return len(self._puntos[indice])
+
+    def punto_valido(self, indice: int) -> bool:
+        """Verifica si el índice corresponde a un punto válido del tablero."""
+        return 0 <= indice < len(self._puntos)
+
+    def tablero_vacio(self) -> bool:
+        """Devuelve True si no hay fichas en ningún punto del tablero."""
+        return self.contar_fichas() == 0
