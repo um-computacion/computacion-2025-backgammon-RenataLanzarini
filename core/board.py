@@ -43,3 +43,18 @@ class Tablero:
     def tablero_vacio(self) -> bool:
         """Devuelve True si no hay fichas en ningún punto del tablero."""
         return self.contar_fichas() == 0
+    
+     def mover_ficha(self, origen: int, destino: int):
+        """Mueve una ficha desde un punto de origen a uno de destino."""
+        if self.esta_vacio(origen):
+            raise ValueError("No hay fichas en el punto de origen")
+        ficha = self._puntos[origen].pop()
+        self._puntos[destino].append(ficha)
+
+    def limpiar_punto(self, indice: int):
+        """Elimina todas las fichas de un punto específico."""
+        self._puntos[indice] = []
+
+    def total_puntos(self) -> int:
+        """Devuelve la cantidad total de puntos del tablero (24)."""
+        return len(self._puntos)  
