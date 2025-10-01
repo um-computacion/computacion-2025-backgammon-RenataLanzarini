@@ -29,3 +29,15 @@ class BackgammonJuego:
         self.estado = "inicial"
         self.turno = 1
 
+    def pausar(self):
+        """Cambia el estado del juego a 'pausado'."""
+        self.estado = "pausado"
+
+    def finalizar(self):
+        """Cambia el estado del juego a 'finalizado'."""
+        self.estado = "finalizado"
+
+    def en_juego(self) -> bool:
+        """Devuelve True si el juego está en curso."""
+        return self.estado == "jugando"
+        
