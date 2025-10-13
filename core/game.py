@@ -10,11 +10,11 @@ class BackgammonJuego:
         """Cambia el estado del juego a 'jugando'."""
         self.estado = "jugando"
 
-    def descripcion(self) -> str:
-        """
-        Devuelve un texto descriptivo del estado actual.
-        """
-        return f"Estado: {self.estado}, turno: {self.turno}"
+     def descripcion(self) -> str:
+        """Devuelve un texto descriptivo del estado actual."""
+        tablero_str = " ".join(self.tablero)       
+         print("Tablero inicial listo para jugar") 
+        return f"Estado: {self.estado}, turno: {self.turno}\nTablero: {tablero_str}"
 
     def cambiar_turno(self):
         """Alterna entre turno 1 y 2."""
@@ -39,5 +39,4 @@ class BackgammonJuego:
 
     def en_juego(self) -> bool:
         """Devuelve True si el juego está en curso."""
-        return self.estado == "jugando"
-        
+        return self.estado == "jugando"      
