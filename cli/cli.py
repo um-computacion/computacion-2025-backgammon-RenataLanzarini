@@ -5,9 +5,14 @@ class BackgammonCLI:
         self.juego = BackgammonJuego()
 
     def iniciar(self):
-        print("Bienvenido a Backgammon (CLI). El juego está listo.")
+        """Inicia el juego desde la CLI."""
+        print("🎲 Bienvenido a Backgammon (CLI) 🎲")
+        self.juego.iniciar()                  
+        print("El juego ha comenzado. ¡Buena suerte!")
+        self.mostrar_estado()                    
+
     
-       def mostrar_estado(self):
+    def mostrar_estado(self):
         """Muestra el estado actual del juego."""
         print(self.juego.descripcion())
 
