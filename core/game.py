@@ -48,3 +48,9 @@ class BackgammonJuego:
     def en_juego(self) -> bool:
         """Devuelve True si el juego está en curso."""
         return self.estado == "jugando"
+
+    def tirar_dados(self) -> list[int]:
+        return self.dados.tirar()
+
+    def movimientos_disponibles(self) -> list[int]:
+        return self.tablero.puntos_ocupados()
