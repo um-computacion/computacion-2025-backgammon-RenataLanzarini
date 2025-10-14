@@ -54,3 +54,16 @@ class BackgammonJuego:
 
     def movimientos_disponibles(self) -> list[int]:
         return self.tablero.puntos_ocupados()
+
+    def colocar_ficha(self, indice: int, ficha: str):
+        if self.tablero.punto_valido(indice):
+            self.tablero._puntos[indice].append(ficha)
+
+    def es_movimiento_valido(self, origen: int, destino: int) -> bool:
+        return self.tablero.punto_valido(origen) and self.tablero.punto_valido(destino) and not self.tablero.esta_vacio(origen)
+
+    def aplicar_movimiento(self, origen: int, destino: int) -> bool:
+        if self.es_movimiento_valido(origen, destino):
+            self.tablero.mover_ficha(origen, destino)
+            return True
+        return False
