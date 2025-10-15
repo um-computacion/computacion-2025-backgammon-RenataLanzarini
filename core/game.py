@@ -95,3 +95,12 @@ class BackgammonJuego:
             return True
         print("Movimiento inválido.")
         return False
+
+        def mover_ficha(self, origen: int, destino: int) -> bool:
+        """Mueve una ficha si el movimiento es válido."""
+        if not self.movimiento_valido(origen, destino):
+            print("Movimiento inválido.")
+            return False
+        self.tablero.mover(origen, destino)
+        print(f"Ficha movida de {origen} a {destino}")
+        return True

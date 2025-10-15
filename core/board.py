@@ -62,3 +62,8 @@ class Tablero:
     def total_puntos(self) -> int:
         """Devuelve la cantidad total de puntos del tablero (24)."""
         return len(self._puntos)
+
+    def mover(self, origen: int, destino: int):
+        """Realiza el movimiento de una ficha en el tablero."""
+        self.puntos[destino] = self.puntos[origen]
+        self.puntos[origen] = "."
