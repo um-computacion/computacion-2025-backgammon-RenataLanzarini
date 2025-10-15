@@ -104,3 +104,13 @@ class BackgammonJuego:
         self.tablero.mover(origen, destino)
         print(f"Ficha movida de {origen} a {destino}")
         return True
+
+            def descripcion(self) -> str:
+        """Devuelve un texto descriptivo del estado actual."""
+        tablero_str = " ".join(self.tablero.puntos)
+        dados_str = ", ".join(map(str, self.dados.valores))
+        return (
+            f"Estado: {self.estado}, turno del jugador {self.turno}\n"
+            f"Dados: [{dados_str}]\n"
+            f"Tablero: {tablero_str}"
+        )
