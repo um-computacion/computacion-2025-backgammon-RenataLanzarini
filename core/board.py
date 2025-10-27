@@ -48,6 +48,18 @@ class Tablero:
         """Devuelve True si no hay fichas en ningún punto del tablero."""
         return self.contar_fichas() == 0
 
+    def colocar_ficha(self, indice: int, ficha: str):
+        """Coloca una ficha en el punto indicado."""
+        if not self.punto_valido(indice):
+            raise ValueError(f"Índice {indice} fuera de rango")
+        self._puntos[indice].append(ficha)
+
+    def quitar_ficha(self, indice: int) -> str | None:
+        """Quita y devuelve la ficha superior de un punto."""
+        if self.esta_vacio(indice):
+            return None
+        return self._puntos[indice].pop()
+
     def mover_ficha(self, origen: int, destino: int):
         """Mueve una ficha desde un punto de origen a uno de destino."""
         if self.esta_vacio(origen):
@@ -63,7 +75,6 @@ class Tablero:
         """Devuelve la cantidad total de puntos del tablero (24)."""
         return len(self._puntos)
 
-    def mover(self, origen: int, destino: int):
-        """Realiza el movimiento de una ficha en el tablero."""
-        self.puntos[destino] = self.puntos[origen]
-        self.puntos[origen] = "."
+    def __str__(self) -> str:
+        """Representación en string del tablero."""
+        return " | ".join(str(len(p)) for p in self._puntos)
