@@ -21,5 +21,20 @@ class Jugador:
     def __str__(self) -> str:
         """Representación en string del jugador."""
         return f"Jugador {self.nombre} ({self.color}) - {self._fichas_restantes} fichas"
+def test_str_jugador():
+    jugador = Jugador("Alice", "X")
+    resultado = str(jugador)
+    assert "Alice" in resultado
+    assert "X" in resultado
 
+def test_perder_ficha_multiples():
+    jugador = Jugador("Test", "O")
+    for i in range(5):
+        jugador.perder_ficha()
+    assert jugador.fichas_restantes() == 10
 
+def test_str_completo():
+    j = Jugador("Test", "X")
+    s = str(j)
+    assert isinstance(s, str)
+    assert len(s) > 0

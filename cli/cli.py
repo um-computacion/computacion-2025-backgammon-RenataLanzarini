@@ -52,9 +52,9 @@ class BackgammonCLI:
 
     def reiniciar_juego(self):
         """Reinicia el juego y muestra confirmación."""
-        self.juego.reiniciar()                      
-        print("🔄 El juego se reinició correctamente")  
-        self.mostrar_estado()                       
+        self.juego.reiniciar()
+        print("🔄 El juego se reinició correctamente")
+        self.mostrar_estado()
 
     def salir(self):
         """Sale del juego mostrando un mensaje de despedida."""
@@ -62,4 +62,4 @@ class BackgammonCLI:
 
 def ejecutar_cli():
     cli = BackgammonCLI()
-    cli.iniciar()git
+    cli.iniciar()
