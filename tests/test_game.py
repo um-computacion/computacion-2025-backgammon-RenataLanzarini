@@ -101,3 +101,11 @@ def test_jugador_incorrecto():
     # Turno del jugador 1, no puede mover ficha de jugador 2
     resultado = juego.aplicar_movimiento(0, 5)
     assert resultado is False
+
+def test_reiniciar_configura_tablero():
+    juego = BackgammonJuego()
+    juego.reiniciar()
+    # Después de reiniciar, el tablero debe tener 30 fichas
+    assert juego.tablero.contar_fichas() == 30
+    assert juego.tablero.contar_fichas_jugador("X") == 15
+    assert juego.tablero.contar_fichas_jugador("O") == 15

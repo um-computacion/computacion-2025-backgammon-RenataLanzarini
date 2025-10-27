@@ -79,3 +79,38 @@ def test_ficha_en_punto_vacio():
 def test_quitar_ficha_vacia():
     tablero = Tablero()
     assert tablero.quitar_ficha(0) is None
+
+def test_configurar_inicial():
+    tablero = Tablero()
+    tablero.configurar_inicial()
+    # Verificar que hay 30 fichas en total (15 por jugador)
+    assert tablero.contar_fichas() == 30
+    
+def test_configurar_inicial_fichas_x():
+    tablero = Tablero()
+    tablero.configurar_inicial()
+    # Verificar que el jugador X tiene 15 fichas
+    assert tablero.contar_fichas_jugador("X") == 15
+    
+def test_configurar_inicial_fichas_o():
+    tablero = Tablero()
+    tablero.configurar_inicial()
+    # Verificar que el jugador O tiene 15 fichas
+    assert tablero.contar_fichas_jugador("O") == 15
+
+def test_configurar_inicial_posiciones():
+    tablero = Tablero()
+    tablero.configurar_inicial()
+    # Verificar algunas posiciones específicas
+    assert tablero.fichas_en(0) == 2  # 2 fichas X en punto 0
+    assert tablero.fichas_en(23) == 2  # 2 fichas O en punto 23
+    assert tablero.fichas_en(11) == 5  # 5 fichas X en punto 11
+    assert tablero.fichas_en(12) == 5  # 5 fichas O en punto 12
+
+def test_contar_fichas_jugador():
+    tablero = Tablero()
+    tablero.colocar_ficha(0, "X")
+    tablero.colocar_ficha(1, "X")
+    tablero.colocar_ficha(2, "O")
+    assert tablero.contar_fichas_jugador("X") == 2
+    assert tablero.contar_fichas_jugador("O") == 1
