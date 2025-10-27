@@ -84,3 +84,10 @@ def test_salir(capsys):
     cli.salir()
     captured = capsys.readouterr()
     assert "Gracias" in captured.out
+
+def test_mostrar_estado_con_dados(capsys):
+    cli = BackgammonCLI()
+    cli.juego.dados_disponibles = [3, 4]
+    cli.mostrar_estado()
+    captured = capsys.readouterr()
+    assert "Dados disponibles:" in captured.out

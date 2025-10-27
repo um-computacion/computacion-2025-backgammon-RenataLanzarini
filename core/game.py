@@ -13,6 +13,7 @@ class BackgammonJuego:
         self.jugador_x = Jugador("Jugador 1", "X")
         self.jugador_o = Jugador("Jugador 2", "O")
         self.dados = Dados()
+        self.dados_disponibles = []  # Dados que aún no se han usado
 
     def iniciar(self):
         """Cambia el estado del juego a 'jugando'."""
@@ -31,6 +32,7 @@ class BackgammonJuego:
         self.estado = "inicial"
         self.turno = 1
         self.tablero.configurar_inicial()
+        self.dados_disponibles = []
 
     def en_juego(self) -> bool:
         """Devuelve True si el juego está en curso."""
@@ -40,17 +42,20 @@ class BackgammonJuego:
         """Devuelve un texto descriptivo del estado actual, tablero y dados."""
         tablero_str = " | ".join(str(self.tablero.fichas_en(i)) for i in range(24))
         dados_str = ", ".join(map(str, self.dados.valores))
+        dados_disp_str = ", ".join(map(str, self.dados_disponibles))
         jugador = self.jugador_x.nombre if self.turno == 1 else self.jugador_o.nombre
         return (
             f"Estado: {self.estado}\n"
             f"Turno actual: {jugador} (Jugador {self.turno})\n"
             f"Dados: [{dados_str}]\n"
+            f"Dados disponibles: [{dados_disp_str}]\n"
             f"Tablero: {tablero_str}"
         )
 
     def cambiar_turno(self):
-        """Alterna entre jugador 1 y 2."""
+        """Alterna entre jugador 1 y 2 y limpia los dados disponibles."""
         self.turno = 2 if self.turno == 1 else 1
+        self.dados_disponibles = []
 
     def jugador_actual(self) -> int:
         """Devuelve el número del jugador en turno."""
@@ -58,7 +63,9 @@ class BackgammonJuego:
 
     def tirar_dados(self) -> list[int]:
         """Lanza los dados y devuelve los valores obtenidos."""
-        return self.dados.tirar()
+        valores = self.dados.tirar()
+        self.dados_disponibles = valores.copy()
+        return valores
 
     def movimientos_disponibles(self) -> list[int]:
         """Devuelve los puntos donde hay fichas que pueden moverse."""
@@ -75,6 +82,7 @@ class BackgammonJuego:
         - Ambas posiciones deben ser válidas.
         - El punto de origen no debe estar vacío.
         - La ficha en origen debe pertenecer al jugador actual.
+        - La distancia debe coincidir con un dado disponible.
         """
         if not (self.tablero.punto_valido(origen) and self.tablero.punto_valido(destino)):
             return False
@@ -82,7 +90,15 @@ class BackgammonJuego:
             return False
         ficha_origen = self.tablero.ficha_en(origen)
         ficha_jugador = "X" if self.turno == 1 else "O"
-        return ficha_origen == ficha_jugador
+        if ficha_origen != ficha_jugador:
+            return False
+        
+        # Validar que la distancia coincida con un dado disponible
+        distancia = abs(destino - origen)
+        if distancia not in self.dados_disponibles:
+            return False
+        
+        return True
 
     def aplicar_movimiento(self, origen: int, destino: int) -> bool:
         """
@@ -90,8 +106,17 @@ class BackgammonJuego:
         Devuelve True si se realizó el movimiento.
         """
         if self.es_movimiento_valido(origen, destino):
+            # Calcular distancia y remover dado usado
+            distancia = abs(destino - origen)
+            self.dados_disponibles.remove(distancia)
+            
+            # Mover la ficha
             self.tablero.mover_ficha(origen, destino)
             print(f"Ficha movida de {origen} a {destino}")
             return True
         print("Movimiento inválido.")
         return False
+
+    def tiene_dados_disponibles(self) -> bool:
+        """Devuelve True si hay dados disponibles para usar."""
+        return len(self.dados_disponibles) > 0
