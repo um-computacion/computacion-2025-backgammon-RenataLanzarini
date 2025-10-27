@@ -30,7 +30,7 @@ class BackgammonJuego:
         """Reinicia el juego al estado inicial y turno 1."""
         self.estado = "inicial"
         self.turno = 1
-        self.tablero.reset()
+        self.tablero.configurar_inicial()
 
     def en_juego(self) -> bool:
         """Devuelve True si el juego está en curso."""

@@ -10,6 +10,49 @@ class Tablero:
         """Inicializa un tablero con 24 puntos vacíos."""
         self._puntos = [[] for _ in range(24)]
 
+    def configurar_inicial(self):
+        """
+        Configura el tablero con la posición inicial del Backgammon.
+        
+        Posiciones estándar:
+        - Punto 0: 2 fichas X
+        - Punto 5: 5 fichas O
+        - Punto 7: 3 fichas O
+        - Punto 11: 5 fichas X
+        - Punto 12: 5 fichas O
+        - Punto 16: 3 fichas X
+        - Punto 18: 5 fichas X
+        - Punto 23: 2 fichas O
+        """
+        self.reset()
+        
+        # Fichas del jugador X (blancas)
+        for _ in range(2):
+            self._puntos[0].append("X")
+        for _ in range(5):
+            self._puntos[11].append("X")
+        for _ in range(3):
+            self._puntos[16].append("X")
+        for _ in range(5):
+            self._puntos[18].append("X")
+        
+        # Fichas del jugador O (negras)
+        for _ in range(2):
+            self._puntos[23].append("O")
+        for _ in range(5):
+            self._puntos[12].append("O")
+        for _ in range(3):
+            self._puntos[7].append("O")
+        for _ in range(5):
+            self._puntos[5].append("O")
+
+    def contar_fichas_jugador(self, color: str) -> int:
+        """Cuenta cuántas fichas de un color específico hay en el tablero."""
+        total = 0
+        for punto in self._puntos:
+            total += sum(1 for ficha in punto if ficha == color)
+        return total
+
     def contar_fichas(self) -> int:
         """Devuelve la cantidad total de fichas en el tablero."""
         return sum(len(p) for p in self._puntos)
