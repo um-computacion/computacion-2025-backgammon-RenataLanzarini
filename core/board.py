@@ -7,8 +7,10 @@ class Tablero:
     """Clase que representa el tablero de Backgammon."""
 
     def __init__(self):
-        """Inicializa un tablero con 24 puntos vacíos."""
+        """Inicializa un tablero con 24 puntos vacíos y barras para fichas capturadas."""
         self._puntos = [[] for _ in range(24)]
+        self.barra_x = []  # Fichas X capturadas
+        self.barra_o = []  # Fichas O capturadas
 
     def configurar_inicial(self):
         """
@@ -66,8 +68,10 @@ class Tablero:
         return [i for i, p in enumerate(self._puntos) if p]
 
     def reset(self):
-        """Vacía todas las fichas del tablero."""
+        """Vacía todas las fichas del tablero y las barras."""
         self._puntos = [[] for _ in range(24)]
+        self.barra_x = []
+        self.barra_o = []
 
     def __len__(self):
         """Permite usar len(tablero) para obtener la cantidad total de fichas."""
@@ -121,3 +125,43 @@ class Tablero:
     def __str__(self) -> str:
         """Representación en string del tablero."""
         return " | ".join(str(len(p)) for p in self._puntos)
+
+    def capturar_ficha(self, indice: int):
+        """
+        Captura la ficha en el punto indicado y la mueve a la barra.
+        Solo se puede capturar si hay exactamente 1 ficha en el punto.
+        """
+        if not self.punto_valido(indice):
+            raise ValueError(f"Índice {indice} fuera de rango")
+        if len(self._puntos[indice]) != 1:
+            raise ValueError("Solo se puede capturar un punto con 1 ficha")
+        
+        ficha = self._puntos[indice].pop()
+        if ficha == "X":
+            self.barra_x.append(ficha)
+        else:
+            self.barra_o.append(ficha)
+
+    def tiene_fichas_en_barra(self, color: str) -> bool:
+        """Verifica si un jugador tiene fichas en la barra."""
+        if color == "X":
+            return len(self.barra_x) > 0
+        else:
+            return len(self.barra_o) > 0
+
+    def sacar_de_barra(self, color: str) -> str:
+        """Saca una ficha de la barra del color especificado."""
+        if color == "X":
+            if len(self.barra_x) > 0:
+                return self.barra_x.pop()
+        else:
+            if len(self.barra_o) > 0:
+                return self.barra_o.pop()
+        raise ValueError(f"No hay fichas {color} en la barra")
+
+    def fichas_en_barra(self, color: str) -> int:
+        """Devuelve la cantidad de fichas de un color en la barra."""
+        if color == "X":
+            return len(self.barra_x)
+        else:
+            return len(self.barra_o)
