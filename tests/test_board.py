@@ -114,3 +114,41 @@ def test_contar_fichas_jugador():
     tablero.colocar_ficha(2, "O")
     assert tablero.contar_fichas_jugador("X") == 2
     assert tablero.contar_fichas_jugador("O") == 1
+
+def test_barra_inicialmente_vacia():
+    tablero = Tablero()
+    assert len(tablero.barra_x) == 0
+    assert len(tablero.barra_o) == 0
+
+def test_capturar_ficha_x():
+    tablero = Tablero()
+    tablero.colocar_ficha(5, "X")
+    tablero.capturar_ficha(5)
+    assert tablero.fichas_en(5) == 0
+    assert len(tablero.barra_x) == 1
+
+def test_capturar_ficha_o():
+    tablero = Tablero()
+    tablero.colocar_ficha(10, "O")
+    tablero.capturar_ficha(10)
+    assert tablero.fichas_en(10) == 0
+    assert len(tablero.barra_o) == 1
+
+def test_tiene_fichas_en_barra():
+    tablero = Tablero()
+    assert not tablero.tiene_fichas_en_barra("X")
+    tablero.barra_x.append("X")
+    assert tablero.tiene_fichas_en_barra("X")
+
+def test_sacar_de_barra():
+    tablero = Tablero()
+    tablero.barra_x.append("X")
+    ficha = tablero.sacar_de_barra("X")
+    assert ficha == "X"
+    assert len(tablero.barra_x) == 0
+
+def test_fichas_en_barra():
+    tablero = Tablero()
+    assert tablero.fichas_en_barra("X") == 0
+    tablero.barra_x.extend(["X", "X", "X"])
+    assert tablero.fichas_en_barra("X") == 3

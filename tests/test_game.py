@@ -177,3 +177,46 @@ def test_movimiento_con_dobles():
     resultado = juego.aplicar_movimiento(0, 3)
     assert resultado is True
     assert len(juego.dados_disponibles) == 3
+
+def test_movimiento_con_captura():
+    juego = BackgammonJuego()
+    # Colocar 1 ficha enemiga en el destino
+    juego.colocar_ficha(5, "O")
+    juego.colocar_ficha(0, "X")
+    juego.dados_disponibles = [5]
+    # Mover y capturar
+    resultado = juego.aplicar_movimiento(0, 5)
+    assert resultado is True
+    assert juego.tablero.fichas_en_barra("O") == 1
+
+def test_movimiento_bloqueado_por_oponente():
+    juego = BackgammonJuego()
+    # Colocar 2 fichas enemigas (bloqueo)
+    juego.colocar_ficha(5, "O")
+    juego.colocar_ficha(5, "O")
+    juego.colocar_ficha(0, "X")
+    juego.dados_disponibles = [5]
+    # No se puede mover a punto bloqueado
+    resultado = juego.aplicar_movimiento(0, 5)
+    assert resultado is False
+
+def test_reingreso_desde_barra():
+    juego = BackgammonJuego()
+    # Poner ficha en la barra
+    juego.tablero.barra_x.append("X")
+    juego.dados_disponibles = [3]
+    # Reingresar desde la barra (origen=-1)
+    resultado = juego.aplicar_movimiento(-1, 2)
+    assert resultado is True
+    assert juego.tablero.fichas_en_barra("X") == 0
+    assert juego.tablero.fichas_en(2) == 1
+
+def test_debe_reingresar_antes_de_mover():
+    juego = BackgammonJuego()
+    juego.tablero.configurar_inicial()
+    # Poner ficha en la barra
+    juego.tablero.barra_x.append("X")
+    juego.dados_disponibles = [3]
+    # No puede mover otras fichas si tiene en la barra
+    resultado = juego.aplicar_movimiento(0, 3)
+    assert resultado is False

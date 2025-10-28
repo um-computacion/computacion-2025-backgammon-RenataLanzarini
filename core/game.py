@@ -80,23 +80,53 @@ class BackgammonJuego:
         """
         Verifica que el movimiento sea legal:
         - Ambas posiciones deben ser válidas.
-        - El punto de origen no debe estar vacío.
+        - Si el jugador tiene fichas en la barra, debe reingresar primero.
+        - El punto de origen no debe estar vacío (o es la barra).
         - La ficha en origen debe pertenecer al jugador actual.
         - La distancia debe coincidir con un dado disponible.
+        - El destino no debe estar bloqueado por el oponente (2+ fichas).
         """
-        if not (self.tablero.punto_valido(origen) and self.tablero.punto_valido(destino)):
-            return False
-        if self.tablero.esta_vacio(origen):
-            return False
-        ficha_origen = self.tablero.ficha_en(origen)
         ficha_jugador = "X" if self.turno == 1 else "O"
-        if ficha_origen != ficha_jugador:
+        
+        # Si tiene fichas en la barra, debe reingresar primero
+        if self.tablero.tiene_fichas_en_barra(ficha_jugador):
+            # El origen debe ser -1 para indicar reingreso desde barra
+            if origen != -1:
+                return False
+        else:
+            # No puede mover desde la barra si no tiene fichas ahí
+            if origen == -1:
+                return False
+        
+        # Validar destino
+        if not self.tablero.punto_valido(destino):
             return False
         
+        # Si no es reingreso, validar origen normal
+        if origen != -1:
+            if not self.tablero.punto_valido(origen):
+                return False
+            if self.tablero.esta_vacio(origen):
+                return False
+            ficha_origen = self.tablero.ficha_en(origen)
+            if ficha_origen != ficha_jugador:
+                return False
+        
         # Validar que la distancia coincida con un dado disponible
-        distancia = abs(destino - origen)
+        if origen == -1:
+            # Para reingreso, la distancia es directa al punto de destino
+            distancia = destino + 1
+        else:
+            distancia = abs(destino - origen)
+        
         if distancia not in self.dados_disponibles:
             return False
+        
+        # Validar que el destino no esté bloqueado (2+ fichas enemigas)
+        if self.tablero.fichas_en(destino) >= 2:
+            ficha_destino = self.tablero.ficha_en(destino)
+            if ficha_destino != ficha_jugador:
+                return False
         
         return True
 
@@ -104,18 +134,41 @@ class BackgammonJuego:
         """
         Aplica un movimiento si es válido.
         Devuelve True si se realizó el movimiento.
+        Maneja capturas si el destino tiene 1 ficha enemiga.
         """
-        if self.es_movimiento_valido(origen, destino):
-            # Calcular distancia y remover dado usado
+        if not self.es_movimiento_valido(origen, destino):
+            print("Movimiento inválido.")
+            return False
+        
+        ficha_jugador = "X" if self.turno == 1 else "O"
+        
+        # Calcular distancia y remover dado usado
+        if origen == -1:
+            distancia = destino + 1  # Simplificación para reingreso
+        else:
             distancia = abs(destino - origen)
-            self.dados_disponibles.remove(distancia)
-            
-            # Mover la ficha
+        self.dados_disponibles.remove(distancia)
+        
+        # Verificar si hay que capturar en el destino
+        if self.tablero.fichas_en(destino) == 1:
+            ficha_destino = self.tablero.ficha_en(destino)
+            if ficha_destino != ficha_jugador:
+                # Capturar la ficha enemiga
+                self.tablero.capturar_ficha(destino)
+                print(f"¡Ficha enemiga capturada en {destino}!")
+        
+        # Mover la ficha
+        if origen == -1:
+            # Reingreso desde la barra
+            ficha = self.tablero.sacar_de_barra(ficha_jugador)
+            self.tablero._puntos[destino].append(ficha)
+            print(f"Ficha reingresada desde la barra a {destino}")
+        else:
+            # Movimiento normal
             self.tablero.mover_ficha(origen, destino)
             print(f"Ficha movida de {origen} a {destino}")
-            return True
-        print("Movimiento inválido.")
-        return False
+        
+        return True
 
     def tiene_dados_disponibles(self) -> bool:
         """Devuelve True si hay dados disponibles para usar."""
