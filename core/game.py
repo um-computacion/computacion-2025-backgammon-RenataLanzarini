@@ -173,3 +173,29 @@ class BackgammonJuego:
     def tiene_dados_disponibles(self) -> bool:
         """Devuelve True si hay dados disponibles para usar."""
         return len(self.dados_disponibles) > 0
+
+    def verificar_ganador(self) -> str | None:
+        """
+        Verifica si hay un ganador.
+        Un jugador gana cuando saca todas sus fichas del tablero.
+        Devuelve 'X', 'O' o None si no hay ganador aún.
+        """
+        # Contar fichas de cada jugador en el tablero
+        fichas_x = self.tablero.contar_fichas_jugador("X")
+        fichas_o = self.tablero.contar_fichas_jugador("O")
+        
+        # Sumar fichas en la barra
+        fichas_x += self.tablero.fichas_en_barra("X")
+        fichas_o += self.tablero.fichas_en_barra("O")
+        
+        # Si un jugador no tiene fichas, ganó
+        if fichas_x == 0:
+            return "X"
+        if fichas_o == 0:
+            return "O"
+        
+        return None
+
+    def hay_ganador(self) -> bool:
+        """Devuelve True si hay un ganador."""
+        return self.verificar_ganador() is not None

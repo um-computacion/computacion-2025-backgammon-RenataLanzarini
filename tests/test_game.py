@@ -220,3 +220,49 @@ def test_debe_reingresar_antes_de_mover():
     # No puede mover otras fichas si tiene en la barra
     resultado = juego.aplicar_movimiento(0, 3)
     assert resultado is False
+
+def test_verificar_ganador_sin_ganador():
+    juego = BackgammonJuego()
+    juego.tablero.configurar_inicial()
+    # Con fichas en el tablero, no hay ganador
+    assert juego.verificar_ganador() is None
+
+def test_verificar_ganador_x_gana():
+    juego = BackgammonJuego()
+    # Quitar todas las fichas X del tablero
+    juego.tablero.reset()
+    # Solo poner fichas O
+    juego.colocar_ficha(0, "O")
+    juego.colocar_ficha(1, "O")
+    # X no tiene fichas, debería ganar
+    assert juego.verificar_ganador() == "X"
+
+def test_verificar_ganador_o_gana():
+    juego = BackgammonJuego()
+    juego.tablero.reset()
+    # Solo poner fichas X
+    juego.colocar_ficha(0, "X")
+    juego.colocar_ficha(1, "X")
+    # O no tiene fichas, debería ganar
+    assert juego.verificar_ganador() == "O"
+
+def test_hay_ganador():
+    juego = BackgammonJuego()
+    juego.tablero.configurar_inicial()  # Tablero con fichas
+    assert not juego.hay_ganador()
+    juego.tablero.reset()
+    juego.colocar_ficha(0, "O")  # Solo quedan fichas O
+    assert juego.hay_ganador()
+
+def test_ganador_con_fichas_en_barra():
+    juego = BackgammonJuego()
+    juego.tablero.reset()
+    # Poner fichas X solo en la barra
+    juego.tablero.barra_x.append("X")
+    juego.colocar_ficha(0, "O")
+    # X tiene fichas en barra, no ha ganado
+    assert juego.verificar_ganador() is None
+    # Quitar de la barra
+    juego.tablero.barra_x.clear()
+    # Ahora X no tiene fichas, gana
+    assert juego.verificar_ganador() == "X"
