@@ -12,6 +12,13 @@ class BackgammonCLI:
         self.mostrar_estado()
 
         while True:
+            # Verificar si hay ganador
+            ganador = self.juego.verificar_ganador()
+            if ganador:
+                print(f"\n🎉 ¡FELICITACIONES! 🎉")
+                print(f"El Jugador {ganador} ha ganado la partida!")
+                print("Puedes escribir 'reiniciar' para jugar de nuevo o 'salir' para terminar.")
+            
             cmd = input("> ").strip().lower()
             if cmd in ("salir", "exit", "q"):
                 self.salir()
@@ -23,10 +30,16 @@ class BackgammonCLI:
                 self.reiniciar_juego()
                 continue
             if cmd == "tirar":
+                if ganador:
+                    print("La partida ya terminó. Reinicia para jugar de nuevo.")
+                    continue
                 vals = self.juego.tirar_dados()
                 print(f"Dados: {vals}  Movimientos: {self.juego.movimientos_disponibles()}")
                 continue
             if cmd.startswith("mover"):
+                if ganador:
+                    print("La partida ya terminó. Reinicia para jugar de nuevo.")
+                    continue
                 parts = cmd.split()
                 if len(parts) != 3:
                     print("Uso: mover <origen> <destino>")
