@@ -11,6 +11,8 @@ class Tablero:
         self._puntos = [[] for _ in range(24)]
         self.barra_x = []  # Fichas X capturadas
         self.barra_o = []  # Fichas O capturadas
+        # AGREGAR ESTA LÍNEA CRÍTICA:
+        self.configurar_inicial()  # ← ESTA LÍNEA FALTA - Pone fichas en posiciones iniciales
 
     def configurar_inicial(self):
         """

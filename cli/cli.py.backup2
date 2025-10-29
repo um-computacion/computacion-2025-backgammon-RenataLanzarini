@@ -20,8 +20,8 @@ class BackgammonCLI:
     """
     
     def __init__(self):
-        """Inicializa la CLI con una nueva instancia del juego."""
-        self.__juego__ = BackgammonJuego()
+    """Inicializa la CLI con una nueva instancia del juego."""
+    self.__juego__ = BackgammonJuego()
 
     def mostrar_tablero_visual(self):
         """
@@ -36,7 +36,7 @@ class BackgammonCLI:
         - 'O' para jugador 2 (negras)
         - Números cuando hay más de 5 fichas en un punto
         """
-        tablero = self.__juego__.tablero
+        tablero = self.__juego.tablero
         
         print("\n" + "=" * 80)
         print("                        🎲 BACKGAMMON - TABLERO 🎲")
@@ -154,8 +154,8 @@ class BackgammonCLI:
         Returns:
             str: String formateado para la barra
         """
-        barra_x = len(self.__juego__.tablero.barra_x)
-        barra_o = len(self.__juego__.tablero.barra_o)
+        barra_x = len(self.__juego.tablero.barra_x)
+        barra_o = len(self.__juego.tablero.barra_o)
         
         linea = "|"
         if fila == 0 and barra_x > 0:
@@ -170,8 +170,8 @@ class BackgammonCLI:
 
     def _mostrar_info_barra(self):
         """Muestra información sobre fichas capturadas en la barra."""
-        barra_x = len(self.__juego__.tablero.barra_x)
-        barra_o = len(self.__juego__.tablero.barra_o)
+        barra_x = len(self.__juego.tablero.barra_x)
+        barra_o = len(self.__juego.tablero.barra_o)
         
         if barra_x > 0 or barra_o > 0:
             print(f"\n 📊 Fichas en barra: X={barra_x}, O={barra_o}")
@@ -182,13 +182,13 @@ class BackgammonCLI:
 
     def _mostrar_dados_disponibles(self):
         """Muestra los dados disponibles para usar en el turno actual."""
-        if hasattr(self.__juego__, 'movimientos_disponibles'):
-            movimientos = self.__juego__.movimientos_disponibles()
+        if hasattr(self.__juego, 'movimientos_disponibles'):
+            movimientos = self.__juego.movimientos_disponibles()
             if movimientos:
                 print(f" 🎲 Dados disponibles: {movimientos}")
-                print(f" 👤 Turno actual: Jugador {'X' if self.__juego__.turno == 1 else 'O'}")
+                print(f" 👤 Turno actual: Jugador {'X' if self.__juego.turno == 1 else 'O'}")
             else:
-                print(f" 👤 Turno: Jugador {'X' if self.__juego__.turno == 1 else 'O'} - Sin dados disponibles")
+                print(f" 👤 Turno: Jugador {'X' if self.__juego.turno == 1 else 'O'} - Sin dados disponibles")
 
     def mostrar_ayuda(self):
         """
@@ -248,7 +248,7 @@ class BackgammonCLI:
         verifica condiciones de victoria.
         """
         self.mostrar_bienvenida()
-        self.__juego__.iniciar()
+        self.__juego.iniciar()
         print("✅ El juego ha comenzado. ¡Buena suerte!")
         self.mostrar_ayuda()
         self.mostrar_tablero_visual()
@@ -256,7 +256,7 @@ class BackgammonCLI:
 
         while True:
             # Verificar si hay ganador
-            ganador = self.__juego__.verificar_ganador()
+            ganador = self.__juego.verificar_ganador()
             if ganador:
                 self._mostrar_victoria(ganador)
             
@@ -320,8 +320,8 @@ class BackgammonCLI:
             print("⚠️  La partida ya terminó. Reinicia para jugar de nuevo.")
             return
         
-        vals = self.__juego__.tirar_dados()
-        movs = self.__juego__.movimientos_disponibles()
+        vals = self.__juego.tirar_dados()
+        movs = self.__juego.movimientos_disponibles()
         
         print(f"\n🎲 Dados tirados: {vals}")
         print(f"📊 Movimientos disponibles: {movs}")
@@ -329,8 +329,8 @@ class BackgammonCLI:
         if not movs:
             print("⚠️  No hay movimientos posibles con estos dados.")
             print("⏭️  Cambiando turno automáticamente...")
-            self.__juego__.cambiar_turno()
-            jugador_actual = 'X' if self.__juego__.turno == 1 else 'O'
+            self.__juego.cambiar_turno()
+            jugador_actual = 'X' if self.__juego.turno == 1 else 'O'
             print(f"🔄 Turno del Jugador {jugador_actual}")
 
     def _procesar_movimiento(self, cmd, ganador):
@@ -360,16 +360,16 @@ class BackgammonCLI:
             print("❌ Origen y destino deben ser números enteros.")
             return
         
-        ok = self.__juego__.aplicar_movimiento(origen, destino)
+        ok = self.__juego.aplicar_movimiento(origen, destino)
         if ok:
             print("✅ Movimiento aplicado correctamente.")
             self.mostrar_tablero_visual()
             
             # Verificar si quedan dados disponibles
-            if not self.__juego__.tiene_dados_disponibles():
+            if not self.__juego.tiene_dados_disponibles():
                 print("\n⏭️  No quedan dados disponibles. Fin del turno.")
-                self.__juego__.cambiar_turno()
-                jugador_actual = self.__juego__.jugador_x.nombre if self.__juego__.turno == 1 else self.__juego__.jugador_o.nombre
+                self.__juego.cambiar_turno()
+                jugador_actual = self.__juego.jugador_x.nombre if self.__juego.turno == 1 else self.__juego.jugador_o.nombre
                 print(f"🔄 Turno de {jugador_actual}")
         else:
             print("❌ Movimiento inválido. Verifica:")
@@ -387,12 +387,12 @@ class BackgammonCLI:
         print("\n" + "─" * 70)
         print("📊 ESTADO DEL JUEGO")
         print("─" * 70)
-        print(self.__juego__.descripcion())
+        print(self.__juego.descripcion())
         print("─" * 70 + "\n")
 
     def reiniciar_juego(self):
         """Reinicia el juego y muestra confirmación con tablero inicial."""
-        self.__juego__.reiniciar()
+        self.__juego.reiniciar()
         print("\n🔄 El juego se ha reiniciado correctamente\n")
         self.mostrar_tablero_visual()
         self.mostrar_estado()
