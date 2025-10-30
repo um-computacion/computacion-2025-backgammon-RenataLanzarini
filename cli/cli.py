@@ -1,159 +1,78 @@
 """
-Interfaz de línea de comandos para Backgammon.
-
-Este módulo proporciona una CLI completa con visualización ASCII del tablero,
-gestión de comandos interactivos y feedback visual detallado.
+Interfaz de línea de comandos SIMPLIFICADA para Backgammon.
+Versión con ayuda interactiva y sugerencias automáticas.
 """
 
 from core.game import BackgammonJuego
 
 
 class BackgammonCLI:
-    """
-    Interfaz de línea de comandos para Backgammon.
-    
-    Proporciona una interfaz interactiva con visualización del tablero,
-    gestión de comandos y feedback visual para los jugadores.
-    
-    Attributes:
-        __juego__: Instancia del juego de Backgammon
-    """
+    """CLI simplificada con guía paso a paso."""
     
     def __init__(self):
-        """Inicializa la CLI con una nueva instancia del juego."""
+        """Inicializa la CLI."""
         self.__juego__ = BackgammonJuego()
+        self.modo_tutorial = True  # Modo tutorial activado por defecto
 
     def mostrar_tablero_visual(self):
-        """
-        Muestra una representación visual del tablero en formato ASCII.
-        
-        El tablero se muestra dividido en dos mitades:
-        - Superior: puntos 13-24
-        - Inferior: puntos 12-1
-        
-        Las fichas se representan con símbolos:
-        - 'X' para jugador 1 (blancas)
-        - 'O' para jugador 2 (negras)
-        - Números cuando hay más de 5 fichas en un punto
-        """
+        """Muestra el tablero de forma visual."""
         tablero = self.__juego__.tablero
         
         print("\n" + "=" * 80)
         print("                        🎲 BACKGAMMON - TABLERO 🎲")
         print("=" * 80)
         
-        # Encabezado superior (puntos 13-24)
+        # Encabezado superior
         print("\n  13  14  15  16  17  18 |BAR| 19  20  21  22  23  24")
         print(" " + "-" * 77)
         
-        # Parte superior del tablero
-        self._mostrar_mitad_superior(tablero)
+        # Parte superior
+        for fila in range(5):
+            linea = " "
+            for punto in range(12, 18):
+                simbolo = self._obtener_simbolo(tablero, punto, fila)
+                linea += f" {simbolo}  "
+            linea += self._formato_barra(fila)
+            for punto in range(18, 24):
+                simbolo = self._obtener_simbolo(tablero, punto, fila)
+                linea += f" {simbolo}  "
+            print(linea)
         
         print(" " + "-" * 77)
         
-        # Parte inferior del tablero
-        self._mostrar_mitad_inferior(tablero)
+        # Parte inferior
+        for fila in range(4, -1, -1):
+            linea = " "
+            for punto in range(11, 5, -1):
+                simbolo = self._obtener_simbolo(tablero, punto, fila)
+                linea += f" {simbolo}  "
+            linea += "|  | "
+            for punto in range(5, -1, -1):
+                simbolo = self._obtener_simbolo(tablero, punto, fila)
+                linea += f" {simbolo}  "
+            print(linea)
         
         print(" " + "-" * 77)
         print("  12  11  10   9   8   7 |BAR|  6   5   4   3   2   1")
         
-        # Información adicional
         self._mostrar_info_barra()
-        self._mostrar_dados_disponibles()
+        self._mostrar_dados_con_ayuda()
         
         print("=" * 80 + "\n")
 
-    def _mostrar_mitad_superior(self, tablero):
-        """
-        Muestra la mitad superior del tablero (puntos 13-24).
-        
-        Args:
-            tablero: Instancia de Tablero con el estado actual
-        """
-        max_altura = 5
-        
-        for fila in range(max_altura):
-            linea = " "
-            
-            # Puntos 13-18
-            for punto in range(12, 18):
-                simbolo = self._obtener_simbolo_para_punto(tablero, punto, fila)
-                linea += f" {simbolo}  "
-            
-            # Barra (muestra fichas capturadas)
-            linea += self._formato_barra(fila)
-            
-            # Puntos 19-24
-            for punto in range(18, 24):
-                simbolo = self._obtener_simbolo_para_punto(tablero, punto, fila)
-                linea += f" {simbolo}  "
-            
-            print(linea)
-
-    def _mostrar_mitad_inferior(self, tablero):
-        """
-        Muestra la mitad inferior del tablero (puntos 1-12).
-        
-        Args:
-            tablero: Instancia de Tablero con el estado actual
-        """
-        max_altura = 5
-        
-        for fila in range(max_altura - 1, -1, -1):
-            linea = " "
-            
-            # Puntos 12-7 (invertidos para visualización)
-            for punto in range(11, 5, -1):
-                simbolo = self._obtener_simbolo_para_punto(tablero, punto, fila)
-                linea += f" {simbolo}  "
-            
-            # Barra (espacio vacío en mitad inferior)
-            linea += "|  | "
-            
-            # Puntos 6-1 (invertidos para visualización)
-            for punto in range(5, -1, -1):
-                simbolo = self._obtener_simbolo_para_punto(tablero, punto, fila)
-                linea += f" {simbolo}  "
-            
-            print(linea)
-
-    def _obtener_simbolo_para_punto(self, tablero, punto, fila):
-        """
-        Obtiene el símbolo a mostrar para un punto en una fila específica.
-        
-        Args:
-            tablero: Instancia de Tablero
-            punto: Número del punto (0-23)
-            fila: Número de fila (0-4)
-            
-        Returns:
-            str: Símbolo a mostrar ('X', 'O', número o espacio)
-        """
+    def _obtener_simbolo(self, tablero, punto, fila):
+        """Obtiene el símbolo para una posición."""
         cantidad = tablero.fichas_en(punto)
-        
         if cantidad == 0:
             return " "
-        
         if fila < min(cantidad, 5):
-            # Mostrar la ficha correspondiente
-            ficha = tablero.ficha_en(punto)
-            return ficha if ficha else " "
+            return tablero.ficha_en(punto) or " "
         elif fila == 4 and cantidad > 5:
-            # Si hay más de 5 fichas, mostrar el número en la última fila
             return str(cantidad)
-        
         return " "
 
     def _formato_barra(self, fila):
-        """
-        Formatea la visualización de la barra con fichas capturadas.
-        
-        Args:
-            fila: Número de fila (0-4)
-            
-        Returns:
-            str: String formateado para la barra
-        """
+        """Formatea la barra."""
         barra_x = len(self.__juego__.tablero.barra_x)
         barra_o = len(self.__juego__.tablero.barra_o)
         
@@ -165,102 +84,123 @@ class BackgammonCLI:
         else:
             linea += "  "
         linea += "| "
-        
         return linea
 
     def _mostrar_info_barra(self):
-        """Muestra información sobre fichas capturadas en la barra."""
+        """Muestra info de la barra."""
         barra_x = len(self.__juego__.tablero.barra_x)
         barra_o = len(self.__juego__.tablero.barra_o)
         
         if barra_x > 0 or barra_o > 0:
             print(f"\n 📊 Fichas en barra: X={barra_x}, O={barra_o}")
-            if barra_x > 0:
-                print("    ⚠️  Jugador X debe reingresar fichas desde la barra")
-            if barra_o > 0:
-                print("    ⚠️  Jugador O debe reingresar fichas desde la barra")
 
-    def _mostrar_dados_disponibles(self):
-        """Muestra los dados disponibles para usar en el turno actual."""
-        if hasattr(self.__juego__, 'movimientos_disponibles'):
-            movimientos = self.__juego__.movimientos_disponibles()
-            if movimientos:
-                print(f" 🎲 Dados disponibles: {movimientos}")
-                print(f" 👤 Turno actual: Jugador {'X' if self.__juego__.turno == 1 else 'O'}")
-            else:
-                print(f" 👤 Turno: Jugador {'X' if self.__juego__.turno == 1 else 'O'} - Sin dados disponibles")
+    def _mostrar_dados_con_ayuda(self):
+        """Muestra dados con ayuda contextual."""
+        ficha = 'X' if self.__juego__.turno == 1 else 'O'
+        print(f"\n 👤 Turno: Jugador {ficha}")
+        
+        if self.__juego__.dados_disponibles:
+            print(f" 🎲 Dados disponibles: {self.__juego__.dados_disponibles}")
+            
+            if self.modo_tutorial:
+                self._mostrar_sugerencias()
+        else:
+            print(" ⏸️  Escribe 'tirar' para lanzar los dados")
+
+    def _mostrar_sugerencias(self):
+        """Muestra sugerencias de movimientos posibles."""
+        print("\n 💡 SUGERENCIAS DE MOVIMIENTO:")
+        
+        ficha_jugador = "X" if self.__juego__.turno == 1 else "O"
+        
+        # Ver si hay fichas en barra
+        if self.__juego__.tablero.tiene_fichas_en_barra(ficha_jugador):
+            print("    ⚠️  ¡Tienes fichas en la barra! Debes reingresarlas primero.")
+            print("    Ejemplo: mover -1 3  (reingresa al punto 3)")
+            return
+        
+        # Buscar puntos con fichas del jugador
+        sugerencias = []
+        for punto in range(24):
+            if not self.__juego__.tablero.esta_vacio(punto):
+                if self.__juego__.tablero.ficha_en(punto) == ficha_jugador:
+                    # Probar cada dado disponible
+                    for dado in self.__juego__.dados_disponibles:
+                        if self.__juego__.turno == 1:
+                            destino = punto + dado
+                        else:
+                            destino = punto - dado
+                        
+                        if 0 <= destino < 24:
+                            if self.__juego__.es_movimiento_valido(punto, destino):
+                                sugerencias.append((punto + 1, destino + 1, dado))
+                                if len(sugerencias) >= 3:
+                                    break
+            if len(sugerencias) >= 3:
+                break
+        
+        if sugerencias:
+            print("    Movimientos posibles:")
+            for origen, destino, dado in sugerencias:
+                print(f"    → mover {origen} {destino}  (usa dado {dado})")
+        else:
+            print("    ⚠️  No hay movimientos posibles con estos dados")
+            print("    El turno pasará automáticamente")
 
     def mostrar_ayuda(self):
-        """
-        Muestra la lista de comandos disponibles con descripciones detalladas.
-        
-        Incluye ejemplos de uso y tips para una mejor experiencia.
-        """
+        """Muestra ayuda simplificada."""
         print("\n" + "=" * 70)
-        print("                    📋 COMANDOS DISPONIBLES")
+        print("                    📋 AYUDA RÁPIDA")
         print("=" * 70)
-        print("\n  VISUALIZACIÓN:")
-        print("    tablero         - Muestra el tablero visual completo")
-        print("    estado          - Muestra el estado resumido del juego")
-        print("    ayuda           - Muestra esta ayuda")
-        print("\n  ACCIONES DEL JUEGO:")
-        print("    tirar           - Tira los dados (inicia tu turno)")
-        print("    mover X Y       - Mueve ficha del punto X al punto Y")
-        print("                      Ejemplo: mover 6 4")
-        print("    mover -1 Y      - Reingresa ficha desde la barra al punto Y")
-        print("                      Ejemplo: mover -1 5")
-        print("\n  GESTIÓN:")
-        print("    reiniciar       - Reinicia el juego desde cero")
-        print("    salir           - Sale del juego")
-        print("\n  💡 TIPS:")
-        print("    • Los puntos se numeran de 1 a 24")
-        print("    • Usa -1 como origen para reingresar desde la barra")
-        print("    • Debes usar todos los dados disponibles antes de cambiar turno")
-        print("    • Si no puedes mover, el turno pasa automáticamente")
+        print("\n  🎮 CÓMO JUGAR:")
+        print("    1. Escribe 'tirar' para lanzar los dados")
+        print("    2. Mira las SUGERENCIAS que aparecen")
+        print("    3. Copia un comando sugerido, por ejemplo:")
+        print("       → mover 12 8")
+        print("    4. Repite hasta usar todos los dados")
+        print("\n  📝 COMANDOS:")
+        print("    tirar       - Lanza los dados")
+        print("    mover X Y   - Mueve del punto X al Y")
+        print("    tablero     - Muestra el tablero")
+        print("    ayuda       - Esta ayuda")
+        print("    tutorial    - Activa/desactiva sugerencias")
+        print("    salir       - Sale del juego")
+        print("\n  💡 RECUERDA:")
+        print("    • Jugador X mueve hacia ADELANTE (1 → 24)")
+        print("    • Jugador O mueve hacia ATRÁS (24 → 1)")
+        print("    • Copia las sugerencias para jugar fácil")
         print("=" * 70 + "\n")
 
     def mostrar_bienvenida(self):
-        """Muestra el mensaje de bienvenida con arte ASCII."""
+        """Muestra bienvenida."""
         print("\n" + "=" * 80)
         print("""
     ╔═══════════════════════════════════════════════════════════════════════╗
     ║                                                                       ║
     ║               🎲  B A C K G A M M O N  -  C L I  🎲                  ║
-    ║                                                                       ║
-    ║                   ¡Bienvenido al juego de estrategia                 ║
-    ║                         más antiguo del mundo!                        ║
+    ║                       VERSIÓN SIMPLIFICADA                           ║
     ║                                                                       ║
     ╚═══════════════════════════════════════════════════════════════════════╝
         """)
         print("=" * 80)
-        print("\n  📖 Reglas básicas:")
-        print("     • Cada jugador debe mover todas sus fichas hacia su home")
-        print("     • Los movimientos se hacen según los dados tirados")
-        print("     • Captura fichas del oponente dejándolas en puntos solitarios")
-        print("     • Gana quien saque todas sus fichas del tablero primero")
+        print("\n  🎓 MODO TUTORIAL ACTIVADO")
+        print("     El juego te sugerirá movimientos posibles")
+        print("     Solo copia y pega los comandos sugeridos")
         print("\n" + "=" * 80 + "\n")
 
     def iniciar(self):
-        """
-        Inicia el juego desde la CLI y entra en un loop de comandos.
-        
-        Gestiona el flujo del juego, procesa comandos del usuario y
-        verifica condiciones de victoria.
-        """
+        """Inicia el juego."""
         self.mostrar_bienvenida()
         self.__juego__.iniciar()
-        print("✅ El juego ha comenzado. ¡Buena suerte!")
-        self.mostrar_ayuda()
+        print("✅ Juego iniciado. Escribe 'ayuda' si tienes dudas.\n")
         self.mostrar_tablero_visual()
-        self.mostrar_estado()
 
         while True:
-            # Verificar si hay ganador
             ganador = self.__juego__.verificar_ganador()
             if ganador:
                 self._mostrar_victoria(ganador)
             
-            cmd = input("\n> ").strip().lower()
+            cmd = input("> ").strip().lower()
             
             if not cmd:
                 continue
@@ -275,6 +215,12 @@ class BackgammonCLI:
             
             if cmd == "tablero":
                 self.mostrar_tablero_visual()
+                continue
+            
+            if cmd == "tutorial":
+                self.modo_tutorial = not self.modo_tutorial
+                estado = "activado" if self.modo_tutorial else "desactivado"
+                print(f"\n✅ Modo tutorial {estado}\n")
                 continue
             
             if cmd == "estado":
@@ -293,124 +239,127 @@ class BackgammonCLI:
                 self._procesar_movimiento(cmd, ganador)
                 continue
             
-            print("❌ Comando no reconocido. Escribe 'ayuda' para ver los comandos disponibles.")
+            print("❌ Comando no reconocido. Escribe 'ayuda' para ver los comandos.")
 
     def _mostrar_victoria(self, ganador):
-        """
-        Muestra el mensaje de victoria con formato especial.
-        
-        Args:
-            ganador: Identificador del jugador ganador
-        """
+        """Muestra mensaje de victoria."""
         print("\n" + "🎉" * 40)
-        print("\n              ¡¡¡ F E L I C I T A C I O N E S !!!")
-        print(f"\n                El Jugador {ganador} ha GANADO")
+        print(f"\n          ¡¡¡ JUGADOR {ganador} HA GANADO !!!")
         print("\n" + "🎉" * 40)
-        print("\n  Puedes escribir 'reiniciar' para jugar de nuevo")
-        print("  o 'salir' para terminar.\n")
+        print("\n  Escribe 'reiniciar' para jugar de nuevo\n")
 
     def _procesar_tirada(self, ganador):
-        """
-        Procesa el comando de tirar dados.
-        
-        Args:
-            ganador: Identificador del ganador (None si no hay)
-        """
+        """Procesa tirada de dados."""
         if ganador:
-            print("⚠️  La partida ya terminó. Reinicia para jugar de nuevo.")
+            print("⚠️  La partida terminó. Escribe 'reiniciar'\n")
+            return
+        
+        if self.__juego__.dados_disponibles:
+            print("⚠️  Ya tienes dados. Úsalos primero.")
+            print(f"   Dados: {self.__juego__.dados_disponibles}\n")
             return
         
         vals = self.__juego__.tirar_dados()
-        movs = self.__juego__.movimientos_disponibles()
-        
         print(f"\n🎲 Dados tirados: {vals}")
-        print(f"📊 Movimientos disponibles: {movs}")
         
-        if not movs:
-            print("⚠️  No hay movimientos posibles con estos dados.")
-            print("⏭️  Cambiando turno automáticamente...")
-            self.__juego__.cambiar_turno()
-            jugador_actual = 'X' if self.__juego__.turno == 1 else 'O'
-            print(f"🔄 Turno del Jugador {jugador_actual}")
+        # Mostrar tablero automáticamente con sugerencias
+        self.mostrar_tablero_visual()
 
     def _procesar_movimiento(self, cmd, ganador):
-        """
-        Procesa el comando de mover ficha.
-        
-        Args:
-            cmd: Comando ingresado por el usuario
-            ganador: Identificador del ganador (None si no hay)
-        """
+        """Procesa movimiento."""
         if ganador:
-            print("⚠️  La partida ya terminó. Reinicia para jugar de nuevo.")
+            print("⚠️  La partida terminó. Escribe 'reiniciar'\n")
             return
         
         parts = cmd.split()
         if len(parts) != 3:
-            print("❌ Uso incorrecto del comando mover")
-            print("   Formato: mover <origen> <destino>")
-            print("   Ejemplo: mover 6 4  (mueve ficha del punto 6 al 4)")
-            print("   Ejemplo: mover -1 5  (reingresa desde barra al punto 5)")
+            print("❌ Formato: mover X Y")
+            print("   Ejemplo: mover 12 8\n")
             return
         
         try:
-            origen = int(parts[1])
-            destino = int(parts[2])
+            origen_input = int(parts[1])
+            destino_input = int(parts[2])
+            
+            # Convertir a índices
+            origen = origen_input if origen_input == -1 else origen_input - 1
+            destino = destino_input - 1
+            
         except ValueError:
-            print("❌ Origen y destino deben ser números enteros.")
+            print("❌ Los números deben ser enteros\n")
             return
         
+        # Explicar por qué falló ANTES de aplicar
+        if not self.__juego__.es_movimiento_valido(origen, destino):
+            self._explicar_error_movimiento(origen, destino, origen_input, destino_input)
+            return
+        
+        # Aplicar movimiento
         ok = self.__juego__.aplicar_movimiento(origen, destino)
         if ok:
-            print("✅ Movimiento aplicado correctamente.")
+            print(f"✅ Movido: {origen_input} → {destino_input}")
+            
+            # Mostrar tablero actualizado
             self.mostrar_tablero_visual()
             
-            # Verificar si quedan dados disponibles
+            # Verificar si terminó el turno
             if not self.__juego__.tiene_dados_disponibles():
-                print("\n⏭️  No quedan dados disponibles. Fin del turno.")
                 self.__juego__.cambiar_turno()
-                jugador_actual = self.__juego__.jugador_x.nombre if self.__juego__.turno == 1 else self.__juego__.jugador_o.nombre
-                print(f"🔄 Turno de {jugador_actual}")
+                ficha = 'X' if self.__juego__.turno == 1 else 'O'
+                print(f"🔄 Turno del Jugador {ficha}")
+                print("   Escribe 'tirar' para lanzar dados\n")
+
+    def _explicar_error_movimiento(self, origen, destino, origen_input, destino_input):
+        """Explica por qué falló un movimiento."""
+        print(f"\n❌ No puedes mover {origen_input} → {destino_input}")
+        
+        ficha_jugador = "X" if self.__juego__.turno == 1 else "O"
+        
+        # Verificar cada condición
+        if origen != -1 and self.__juego__.tablero.esta_vacio(origen):
+            print(f"   Razón: El punto {origen_input} está vacío")
+        elif origen != -1 and self.__juego__.tablero.ficha_en(origen) != ficha_jugador:
+            ficha_en_origen = self.__juego__.tablero.ficha_en(origen)
+            print(f"   Razón: El punto {origen_input} tiene fichas {ficha_en_origen}, no tuyas ({ficha_jugador})")
+        elif self.__juego__.tablero.tiene_fichas_en_barra(ficha_jugador) and origen != -1:
+            print(f"   Razón: Tienes fichas en la barra, debes reingresarlas primero")
+            print(f"   Usa: mover -1 Y")
         else:
-            print("❌ Movimiento inválido. Verifica:")
-            print("   • Que tengas dados disponibles para ese movimiento")
-            print("   • Que el punto de origen tenga tus fichas")
-            print("   • Que el punto de destino no esté bloqueado")
-            print("   • Si tienes fichas en la barra, debes reingresarlas primero")
+            # Calcular distancia
+            if origen == -1:
+                distancia = destino + 1
+            else:
+                distancia = abs(destino - origen)
+            
+            if distancia not in self.__juego__.dados_disponibles:
+                print(f"   Razón: La distancia es {distancia}, pero tus dados son {self.__juego__.dados_disponibles}")
+            else:
+                print(f"   Razón: El punto {destino_input} está bloqueado por el oponente")
+        
+        print("\n   💡 Mira las SUGERENCIAS arriba para ver movimientos válidos\n")
 
     def mostrar_estado(self):
-        """
-        Muestra el estado actual del juego de forma detallada.
-        
-        Incluye información sobre turno, dados y estado general.
-        """
+        """Muestra estado."""
         print("\n" + "─" * 70)
-        print("📊 ESTADO DEL JUEGO")
+        print("📊 ESTADO")
         print("─" * 70)
         print(self.__juego__.descripcion())
         print("─" * 70 + "\n")
 
     def reiniciar_juego(self):
-        """Reinicia el juego y muestra confirmación con tablero inicial."""
+        """Reinicia el juego."""
         self.__juego__.reiniciar()
-        print("\n🔄 El juego se ha reiniciado correctamente\n")
+        print("\n🔄 Juego reiniciado\n")
         self.mostrar_tablero_visual()
-        self.mostrar_estado()
 
     def salir(self):
-        """Sale del juego mostrando un mensaje de despedida."""
+        """Sale del juego."""
         print("\n" + "=" * 70)
-        print("\n          👋 Gracias por jugar Backgammon")
-        print("                ¡Hasta la próxima!")
+        print("\n          👋 ¡Gracias por jugar!")
         print("\n" + "=" * 70 + "\n")
 
 
 def ejecutar_cli():
-    """
-    Función auxiliar para ejecutar la CLI.
-    
-    Esta función sirve como punto de entrada para iniciar
-    la interfaz de línea de comandos del juego.
-    """
+    """Ejecuta la CLI."""
     cli = BackgammonCLI()
     cli.iniciar()

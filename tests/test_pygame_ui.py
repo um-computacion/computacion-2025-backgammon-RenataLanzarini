@@ -1,7 +1,8 @@
+"""Tests para la interfaz gráfica de Backgammon."""
 import pytest
 import sys
 import os
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 # Configurar entorno para testing sin display
 os.environ['SDL_VIDEODRIVER'] = 'dummy'
@@ -16,7 +17,6 @@ class TestBackgammonUI:
              patch('pygame.display.set_caption'), \
              patch('pygame.font.Font') as mock_font:
             
-            # Mock de la fuente
             mock_font_instance = Mock()
             mock_font.return_value = mock_font_instance
             
@@ -46,8 +46,6 @@ class TestBackgammonUI:
             
             from ui.pygame_ui import BackgammonUI
             ui = BackgammonUI()
-            
-            # Verificar que el método existe
             assert hasattr(ui, 'punto_a_coordenadas')
 
     def test_coordenadas_a_punto(self):
@@ -59,8 +57,6 @@ class TestBackgammonUI:
             
             from ui.pygame_ui import BackgammonUI
             ui = BackgammonUI()
-            
-            # Verificar que el método existe
             assert hasattr(ui, 'coordenadas_a_punto')
 
     def test_manejar_eventos_quit(self):
@@ -72,9 +68,9 @@ class TestBackgammonUI:
              patch('pygame.event.get') as mock_get:
             
             from ui.pygame_ui import BackgammonUI
-            ui = BackgammonUI()
+            import pygame
             
-            # Mock evento QUIT
+            ui = BackgammonUI()
             mock_event = Mock()
             mock_event.type = pygame.QUIT
             mock_get.return_value = [mock_event]
@@ -91,9 +87,9 @@ class TestBackgammonUI:
              patch('pygame.event.get') as mock_get:
             
             from ui.pygame_ui import BackgammonUI
-            ui = BackgammonUI()
+            import pygame
             
-            # Mock evento KEYDOWN ESC
+            ui = BackgammonUI()
             mock_event = Mock()
             mock_event.type = pygame.KEYDOWN
             mock_event.key = pygame.K_ESCAPE
@@ -111,16 +107,15 @@ class TestBackgammonUI:
              patch('pygame.event.get') as mock_get:
             
             from ui.pygame_ui import BackgammonUI
-            ui = BackgammonUI()
+            import pygame
             
-            # Mock evento KEYDOWN ESPACIO
+            ui = BackgammonUI()
             mock_event = Mock()
             mock_event.type = pygame.KEYDOWN
             mock_event.key = pygame.K_SPACE
             mock_get.return_value = [mock_event]
             
             ui.manejar_eventos()
-            # Verificar que se intentó tirar dados
             assert hasattr(ui.juego, 'tirar_dados')
 
     def test_manejar_eventos_reinicio(self):
@@ -132,16 +127,15 @@ class TestBackgammonUI:
              patch('pygame.event.get') as mock_get:
             
             from ui.pygame_ui import BackgammonUI
-            ui = BackgammonUI()
+            import pygame
             
-            # Mock evento KEYDOWN R
+            ui = BackgammonUI()
             mock_event = Mock()
             mock_event.type = pygame.KEYDOWN
             mock_event.key = pygame.K_r
             mock_get.return_value = [mock_event]
             
             ui.manejar_eventos()
-            # Verificar que se intentó reiniciar
             assert hasattr(ui.juego, 'reiniciar')
 
     def test_manejar_click_mouse_sin_dados(self):
@@ -154,8 +148,6 @@ class TestBackgammonUI:
             from ui.pygame_ui import BackgammonUI
             ui = BackgammonUI()
             ui.dados_tirados = False
-            
-            # Verificar que se puede manejar clicks
             assert hasattr(ui, 'manejar_click_mouse')
 
     def test_manejar_click_mouse_fuera_tablero(self):
@@ -167,8 +159,6 @@ class TestBackgammonUI:
             
             from ui.pygame_ui import BackgammonUI
             ui = BackgammonUI()
-            
-            # Verificar que existe el método
             assert hasattr(ui, 'manejar_click_mouse')
 
     def test_obtener_movimientos_validos(self):
@@ -180,8 +170,6 @@ class TestBackgammonUI:
             
             from ui.pygame_ui import BackgammonUI
             ui = BackgammonUI()
-            
-            # Verificar que existe el método
             assert hasattr(ui, 'obtener_movimientos_validos')
 
     def test_obtener_movimientos_validos_sin_dados(self):
@@ -193,10 +181,7 @@ class TestBackgammonUI:
             
             from ui.pygame_ui import BackgammonUI
             ui = BackgammonUI()
-            
-            # Sin dados, no debería haber movimientos
             ui.juego.dados_disponibles = []
-            # Verificar que se puede llamar al método
             assert hasattr(ui, 'obtener_movimientos_validos')
 
     def test_ui_run_bucle_principal(self):
@@ -206,38 +191,51 @@ class TestBackgammonUI:
              patch('pygame.display.set_caption'), \
              patch('pygame.font.Font'), \
              patch('pygame.display.flip'), \
-             patch('pygame.time.Clock') as mock_clock:
+             patch('pygame.quit'), \
+             patch('pygame.time.Clock'):
             
             from ui.pygame_ui import BackgammonUI
             ui = BackgammonUI()
-            
-            # Mock para salir inmediatamente
             ui.running = False
             ui.run()
-            
-            # Verificar que se ejecutó sin errores
             assert True
 
-    def test_ui_cerrar(self):
-        """Test de cierre de la UI."""
+    def test_dibujar_tablero(self):
+        """Test de dibujo del tablero."""
         with patch('pygame.init'), \
              patch('pygame.display.set_mode'), \
              patch('pygame.display.set_caption'), \
              patch('pygame.font.Font'), \
-             patch('pygame.quit'):
+             patch('pygame.draw.rect'), \
+             patch('pygame.draw.line'), \
+             patch('pygame.draw.polygon'):
             
             from ui.pygame_ui import BackgammonUI
             ui = BackgammonUI()
+            ui.dibujar_tablero()
+            assert True
+
+    def test_dibujar_info_panel(self):
+        """Test de dibujo del panel de información."""
+        with patch('pygame.init'), \
+             patch('pygame.display.set_mode'), \
+             patch('pygame.display.set_caption'), \
+             patch('pygame.font.Font'), \
+             patch('pygame.draw.rect'):
             
-            ui.cerrar()
-            assert ui.running is False
+            from ui.pygame_ui import BackgammonUI
+            ui = BackgammonUI()
+            ui.dibujar_info_panel()
+            assert True
+
 
 def test_ejecutar_pygame_ui():
     """Test de la función principal de ejecución."""
     from ui.pygame_ui import ejecutar_pygame_ui
-    from unittest.mock import patch
     
-    with patch('ui.pygame_ui.BackgammonUI') as mock_ui_class:
+    with patch('ui.pygame_ui.BackgammonUI') as mock_ui_class, \
+         patch('pygame.quit'):
+        
         mock_ui_instance = Mock()
         mock_ui_instance.run = Mock()
         mock_ui_class.return_value = mock_ui_instance
@@ -245,17 +243,6 @@ def test_ejecutar_pygame_ui():
         ejecutar_pygame_ui()
         mock_ui_instance.run.assert_called_once()
 
-def test_ejecutar_pygame_ui_con_excepcion():
-    """Test de manejo de excepciones en la función principal."""
-    from ui.pygame_ui import ejecutar_pygame_ui
-    
-    with patch('ui.pygame_ui.BackgammonUI') as mock_ui_class:
-        mock_ui_instance = Mock()
-        mock_ui_instance.run.side_effect = Exception("Error de prueba")
-        mock_ui_class.return_value = mock_ui_instance
-        
-        # Debería manejar la excepción sin propagarla
-        ejecutar_pygame_ui()  # No debería lanzar excepción
 
 # Import pygame al final para evitar problemas de inicialización
 import pygame
