@@ -56,6 +56,7 @@ class BackgammonCLI:
         print("  12  11  10   9   8   7 |BAR|  6   5   4   3   2   1")
         
         self._mostrar_info_barra()
+        self._mostrar_fichas_fuera()
         self._mostrar_dados_con_ayuda()
         
         print("=" * 80 + "\n")
@@ -93,6 +94,24 @@ class BackgammonCLI:
         
         if barra_x > 0 or barra_o > 0:
             print(f"\n 📊 Fichas en barra: X={barra_x}, O={barra_o}")
+
+    def _mostrar_fichas_fuera(self):
+        """Muestra fichas que han salido del tablero."""
+        # Contar fichas fuera
+        fichas_x_tablero = self.__juego__.tablero.contar_fichas_jugador("X")
+        fichas_x_barra = len(self.__juego__.tablero.barra_x)
+        fichas_x_fuera = 15 - fichas_x_tablero - fichas_x_barra
+        
+        fichas_o_tablero = self.__juego__.tablero.contar_fichas_jugador("O")
+        fichas_o_barra = len(self.__juego__.tablero.barra_o)
+        fichas_o_fuera = 15 - fichas_o_tablero - fichas_o_barra
+        
+        if fichas_x_fuera > 0 or fichas_o_fuera > 0:
+            print(f"\n 🏁 Fichas FUERA del tablero:")
+            if fichas_x_fuera > 0:
+                print(f"    Jugador X: {fichas_x_fuera}/15 {'●' * min(fichas_x_fuera, 10)}")
+            if fichas_o_fuera > 0:
+                print(f"    Jugador O: {fichas_o_fuera}/15 {'○' * min(fichas_o_fuera, 10)}")
 
     def _mostrar_dados_con_ayuda(self):
         """Muestra dados con ayuda contextual."""
@@ -145,7 +164,7 @@ class BackgammonCLI:
                 print(f"    → mover {origen} {destino}  (usa dado {dado})")
         else:
             print("    ⚠️  No hay movimientos posibles con estos dados")
-            print("    El turno pasará automáticamente")
+            print("    Escribe 'pasar' para saltar el turno")
 
     def mostrar_ayuda(self):
         """Muestra ayuda simplificada."""
@@ -158,9 +177,11 @@ class BackgammonCLI:
         print("    3. Copia un comando sugerido, por ejemplo:")
         print("       → mover 12 8")
         print("    4. Repite hasta usar todos los dados")
+        print("    5. Si no puedes mover, escribe 'pasar'")
         print("\n  📝 COMANDOS:")
         print("    tirar       - Lanza los dados")
         print("    mover X Y   - Mueve del punto X al Y")
+        print("    pasar       - Pasa turno (solo sin movimientos)")
         print("    tablero     - Muestra el tablero")
         print("    ayuda       - Esta ayuda")
         print("    tutorial    - Activa/desactiva sugerencias")
@@ -169,6 +190,8 @@ class BackgammonCLI:
         print("    • Jugador X mueve hacia ADELANTE (1 → 24)")
         print("    • Jugador O mueve hacia ATRÁS (24 → 1)")
         print("    • Copia las sugerencias para jugar fácil")
+        print("    • mover -1 Y reingresan fichas desde la barra")
+        print("    • Solo puedes 'pasar' si NO tienes movimientos")
         print("=" * 70 + "\n")
 
     def mostrar_bienvenida(self):
@@ -237,6 +260,10 @@ class BackgammonCLI:
             
             if cmd.startswith("mover"):
                 self._procesar_movimiento(cmd, ganador)
+                continue
+            
+            if cmd == "pasar":
+                self._procesar_pasar_turno(ganador)
                 continue
             
             print("❌ Comando no reconocido. Escribe 'ayuda' para ver los comandos.")
@@ -309,6 +336,67 @@ class BackgammonCLI:
                 print(f"🔄 Turno del Jugador {ficha}")
                 print("   Escribe 'tirar' para lanzar dados\n")
 
+    def _procesar_pasar_turno(self, ganador):
+        """Procesa el comando de pasar turno."""
+        if ganador:
+            print("⚠️  La partida terminó. Escribe 'reiniciar'\n")
+            return
+        
+        if not self.__juego__.dados_disponibles:
+            print("⚠️  No hay dados para usar. Tira primero con 'tirar'\n")
+            return
+        
+        ficha_jugador = "X" if self.__juego__.turno == 1 else "O"
+        
+        # Verificar si realmente no hay movimientos
+        tiene_movimientos = False
+        
+        # 1. Verificar reingreso desde barra
+        if self.__juego__.tablero.tiene_fichas_en_barra(ficha_jugador):
+            for dado in self.__juego__.dados_disponibles:
+                if ficha_jugador == "X":
+                    punto = dado - 1
+                    if 0 <= punto <= 5:
+                        puede, _ = self.__juego__.puede_reingresar_desde_barra(punto)
+                        if puede:
+                            tiene_movimientos = True
+                            break
+                else:
+                    punto = 24 - dado
+                    if 18 <= punto <= 23:
+                        puede, _ = self.__juego__.puede_reingresar_desde_barra(punto)
+                        if puede:
+                            tiene_movimientos = True
+                            break
+        else:
+            # 2. Verificar movimientos normales
+            for punto in range(24):
+                if not self.__juego__.tablero.esta_vacio(punto):
+                    if self.__juego__.tablero.ficha_en(punto) == ficha_jugador:
+                        for destino in range(24):
+                            if self.__juego__.es_movimiento_valido(punto, destino):
+                                tiene_movimientos = True
+                                break
+                if tiene_movimientos:
+                    break
+        
+        if tiene_movimientos:
+            print("\n" + "="*60)
+            print("⚠️  ¡AÚN TIENES MOVIMIENTOS POSIBLES!")
+            print("   No puedes pasar turno si puedes mover.")
+            print("   Mira las SUGERENCIAS arriba ☝️")
+            print("="*60 + "\n")
+            return
+        
+        # Pasar turno
+        self.__juego__.cambiar_turno()
+        ficha = 'X' if self.__juego__.turno == 1 else 'O'
+        print("\n" + "="*60)
+        print(f"✅ Turno pasado. Ahora juega {ficha}")
+        print("   Escribe 'tirar' para lanzar dados")
+        print("="*60 + "\n")
+        self.mostrar_tablero_visual()
+
     def _explicar_error_movimiento(self, origen, destino, origen_input, destino_input):
         """Explica por qué falló un movimiento."""
         print(f"\n❌ No puedes mover {origen_input} → {destino_input}")
@@ -363,3 +451,7 @@ def ejecutar_cli():
     """Ejecuta la CLI."""
     cli = BackgammonCLI()
     cli.iniciar()
+
+
+if __name__ == "__main__":
+    ejecutar_cli()

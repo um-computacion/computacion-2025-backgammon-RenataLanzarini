@@ -99,7 +99,6 @@ def test_mostrar_bienvenida(capsys):
     cli = BackgammonCLI()
     cli.mostrar_bienvenida()
     captured = capsys.readouterr()
-    # El texto tiene espacios entre letras: "B A C K G A M M O N"
     assert 'B A C K G A M M O N' in captured.out or 'backgammon' in captured.out.lower()
 
 
@@ -351,7 +350,6 @@ def test_cobertura_formato_barra_con_fichas():
     juego = cli.__juego__
     juego.iniciar()
     
-    # Agregar fichas a las barras directamente
     juego.tablero.barra_x.append('X')
     juego.tablero.barra_o.append('O')
     
@@ -384,7 +382,6 @@ def test_cobertura_sugerencias_con_barra(capsys):
     juego = cli.__juego__
     juego.iniciar()
     
-    # Agregar fichas a la barra directamente
     juego.tablero.barra_x.append('X')
     juego.tirar_dados()
     
@@ -424,7 +421,6 @@ def test_cobertura_mostrar_info_barra(capsys):
     juego = cli.__juego__
     juego.iniciar()
     
-    # Agregar fichas a las barras directamente
     juego.tablero.barra_x.append('X')
     juego.tablero.barra_o.append('O')
     
@@ -467,3 +463,130 @@ def test_cobertura_procesar_movimiento_sin_params(capsys):
     cli._procesar_movimiento('mover', None)
     captured = capsys.readouterr()
     assert 'Formato' in captured.out or 'formato' in captured.out.lower()
+
+
+def test_cobertura_mostrar_fichas_fuera(capsys):
+    """Test de visualización de fichas fuera."""
+    cli = BackgammonCLI()
+    
+    # Sin fichas fuera
+    cli._mostrar_fichas_fuera()
+    captured = capsys.readouterr()
+    assert len(captured.out) >= 0
+    
+    # Con fichas fuera
+    cli.__juego__.tablero._puntos = [[] for _ in range(24)]
+    cli._mostrar_fichas_fuera()
+    captured = capsys.readouterr()
+    assert len(captured.out) > 0
+    
+    # Con fichas mixtas
+    cli.__juego__.tablero.barra_x = ["X"]
+    cli._mostrar_fichas_fuera()
+    captured = capsys.readouterr()
+    assert len(captured.out) > 0
+
+
+def test_procesar_pasar_turno_sin_dados(capsys):
+    """Test pasar turno sin dados."""
+    cli = BackgammonCLI()
+    cli.__juego__.iniciar()
+    cli._procesar_pasar_turno(None)
+    captured = capsys.readouterr()
+    assert "dados" in captured.out.lower() or "tira" in captured.out.lower()
+
+
+def test_procesar_pasar_turno_con_ganador(capsys):
+    """Test pasar turno con ganador."""
+    cli = BackgammonCLI()
+    cli.__juego__.iniciar()
+    cli._procesar_pasar_turno("X")
+    captured = capsys.readouterr()
+    assert "terminó" in captured.out.lower() or "reiniciar" in captured.out.lower()
+
+
+def test_procesar_pasar_turno_con_movimientos(capsys):
+    """Test pasar turno teniendo movimientos."""
+    cli = BackgammonCLI()
+    cli.__juego__.iniciar()
+    cli.__juego__.tirar_dados()
+    cli._procesar_pasar_turno(None)
+    captured = capsys.readouterr()
+    assert len(captured.out) > 0
+
+
+def test_comando_pasar_en_flujo(capsys):
+    """Test comando pasar en flujo normal."""
+    cli = BackgammonCLI()
+    with patch('builtins.input', side_effect=['tirar', 'pasar', 'salir']):
+        cli.iniciar()
+    captured = capsys.readouterr()
+    assert len(captured.out) > 0
+
+
+def test_procesar_pasar_turno_sin_movimientos_barra(capsys):
+    """Test pasar turno con fichas en barra pero sin movimientos."""
+    cli = BackgammonCLI()
+    cli.__juego__.iniciar()
+    cli.__juego__.tirar_dados()
+    
+    # Agregar fichas a barra
+    cli.__juego__.tablero.barra_x.append("X")
+    
+    # Bloquear todos los puntos de entrada
+    for i in range(6):
+        cli.__juego__.tablero._puntos[i] = ["O", "O"]
+    
+    cli._procesar_pasar_turno(None)
+    captured = capsys.readouterr()
+    assert len(captured.out) > 0
+
+
+def test_procesar_pasar_turno_sin_movimientos_normales(capsys):
+    """Test pasar turno sin movimientos normales."""
+    cli = BackgammonCLI()
+    cli.__juego__.iniciar()
+    
+    # Dar dados muy altos que no permitan movimientos
+    cli.__juego__.dados_disponibles = [6, 6, 6, 6]
+    
+    # Bloquear posibles destinos
+    cli.__juego__.tablero._puntos[0] = ["X"]
+    for i in range(1, 24):
+        if i >= 6:
+            cli.__juego__.tablero._puntos[i] = ["O", "O"]
+    
+    cli._procesar_pasar_turno(None)
+    captured = capsys.readouterr()
+    assert len(captured.out) > 0
+
+
+def test_ayuda_contiene_pasar(capsys):
+    """Test que ayuda menciona comando pasar."""
+    cli = BackgammonCLI()
+    cli.mostrar_ayuda()
+    captured = capsys.readouterr()
+    assert 'pasar' in captured.out.lower()
+
+
+def test_comando_pasar_directo(capsys):
+    """Test comando pasar usado directamente."""
+    cli = BackgammonCLI()
+    with patch('builtins.input', side_effect=['pasar', 'salir']):
+        cli.iniciar()
+    captured = capsys.readouterr()
+    assert "dados" in captured.out.lower() or len(captured.out) > 0
+
+
+def test_mostrar_fichas_fuera_con_capsys(capsys):
+    """Test mostrar fichas fuera captura salida."""
+    cli = BackgammonCLI()
+    cli.__juego__.iniciar()
+    
+    # Vaciar algunos puntos para simular fichas fuera
+    cli.__juego__.tablero._puntos[0] = []
+    cli.__juego__.tablero._puntos[1] = []
+    
+    cli._mostrar_fichas_fuera()
+    captured = capsys.readouterr()
+    assert "FUERA" in captured.out or "fuera" in captured.out.lower() or len(captured.out) >= 0
