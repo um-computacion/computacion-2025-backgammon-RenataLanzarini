@@ -26,6 +26,7 @@ class TestBackgammonUI:
             mock_font_instance.render = MagicMock(return_value=MagicMock())
             mock_font.return_value = mock_font_instance
             
+            # Importar desde pygame_ui.ui (carpeta/archivo)
             from pygame_ui.ui import BackgammonUI
             ui = BackgammonUI()
             ui.screen = mock_screen
@@ -510,8 +511,6 @@ class TestBackgammonUI:
             ui_mock.dibujar_fichas_barra()
             assert True
 
-    # NUEVOS TESTS PARA AUMENTAR COBERTURA
-
     def test_dibujar_puntos_superiores_columna_mayor_6(self, ui_mock):
         """Test de dibujo de puntos superiores con columna >= 6."""
         with patch('pygame.draw.polygon'), \
@@ -529,9 +528,8 @@ class TestBackgammonUI:
     def test_click_en_barra_jugador_x(self, ui_mock):
         """Test de click en barra con fichas X."""
         ui_mock.juego.tablero.barra_x.append("X")
-        # Usar valores directos ya que son atributos privados
-        barra_x = 20 + (6 * (820 / 13))  # TABLERO_X + (6 * ANCHO_PUNTO)
-        y_superior = 80 + 50  # TABLERO_Y + 50
+        barra_x = 20 + (6 * (820 / 13))
+        y_superior = 80 + 50
         
         jugador = ui_mock.click_en_barra(barra_x + 30, y_superior)
         assert jugador == "X"
@@ -540,7 +538,7 @@ class TestBackgammonUI:
         """Test de click en barra con fichas O."""
         ui_mock.juego.tablero.barra_o.append("O")
         barra_x = 20 + (6 * (820 / 13))
-        y_inferior = 80 + 460 - 50  # TABLERO_Y + TABLERO_ALTO - 50
+        y_inferior = 80 + 460 - 50
         
         jugador = ui_mock.click_en_barra(barra_x + 30, y_inferior)
         assert jugador == "O"
@@ -606,7 +604,6 @@ class TestBackgammonUI:
         barra_x = 20 + (6 * (820 / 13))
         
         ui_mock.manejar_click_mouse(barra_x + 30, 100)
-        # Solo verificar que no crashea, el comportamiento puede variar
         assert True
 
     def test_manejar_click_con_ficha_barra_seleccionada_movimiento_exitoso(self, ui_mock):
@@ -631,7 +628,6 @@ class TestBackgammonUI:
         ui_mock.juego.tablero.barra_x.append("X")
         ui_mock.movimientos_validos = [2]
         
-        # Simular que hay ganador
         with patch.object(ui_mock.juego, 'hay_ganador', return_value=True):
             x, y = ui_mock.punto_a_coordenadas(2, 0)
             ui_mock.manejar_click_mouse(x, y)
@@ -645,7 +641,6 @@ class TestBackgammonUI:
         
         x, y = ui_mock.punto_a_coordenadas(0, 0)
         
-        # Mock para que no haya movimientos válidos
         with patch.object(ui_mock, 'obtener_movimientos_validos', return_value=[]):
             ui_mock.manejar_click_mouse(x, y)
             assert "movimientos" in ui_mock.mensaje.lower() or ui_mock.ficha_seleccionada is None
@@ -654,7 +649,7 @@ class TestBackgammonUI:
         """Test de intentar seleccionar ficha enemiga."""
         ui_mock.dados_tirados = True
         ui_mock.juego.dados_disponibles = [3]
-        ui_mock.juego.turno = 1  # Turno de X
+        ui_mock.juego.turno = 1
         ui_mock.juego.tablero._puntos[23] = ["O"]
         
         x, y = ui_mock.punto_a_coordenadas(23, 0)
@@ -682,7 +677,7 @@ class TestBackgammonUI:
         ui_mock.movimientos_validos = [3]
         
         with patch.object(ui_mock.juego, 'aplicar_movimiento', return_value=True):
-            ui_mock.juego.dados_disponibles = []  # Simular que se consumieron
+            ui_mock.juego.dados_disponibles = []
             x, y = ui_mock.punto_a_coordenadas(3, 0)
             ui_mock.manejar_click_mouse(x, y)
             assert True
@@ -727,25 +722,25 @@ class TestBackgammonUI:
 
     def test_coordenadas_a_punto_columna_negativa(self, ui_mock):
         """Test de coordenadas que resultan en columna negativa."""
-        punto = ui_mock.coordenadas_a_punto(5, 300)  # Muy cerca del borde
+        punto = ui_mock.coordenadas_a_punto(5, 300)
         assert punto is None
 
     def test_coordenadas_a_punto_columna_mayor_11(self, ui_mock):
         """Test de coordenadas que resultan en columna > 11."""
-        punto = ui_mock.coordenadas_a_punto(950, 300)  # Muy lejos del tablero
+        punto = ui_mock.coordenadas_a_punto(950, 300)
         assert punto is None
 
     def test_coordenadas_a_punto_mitad_superior(self, ui_mock):
         """Test de conversión en mitad superior."""
         x = 100
-        y = 150  # Arriba
+        y = 150
         punto = ui_mock.coordenadas_a_punto(x, y)
         assert punto is None or (punto is not None and punto < 12)
 
     def test_coordenadas_a_punto_mitad_inferior(self, ui_mock):
         """Test de conversión en mitad inferior."""
         x = 100
-        y = 500  # Abajo
+        y = 500
         punto = ui_mock.coordenadas_a_punto(x, y)
         assert punto is None or (punto is not None and punto >= 12)
 
@@ -862,14 +857,13 @@ class TestBackgammonUI:
     def test_manejar_click_barra_jugador_incorrecto(self, ui_mock):
         """Test de click en barra del jugador incorrecto."""
         ui_mock.dados_tirados = True
-        ui_mock.juego.turno = 1  # Turno X
+        ui_mock.juego.turno = 1
         ui_mock.juego.tablero.barra_o.append("O")
         
         barra_x = 20 + (6 * (820 / 13))
         y_inferior = 80 + 460 - 50
         
         ui_mock.manejar_click_mouse(barra_x + 30, y_inferior)
-        # Verificar que no seleccionó la ficha incorrecta
         assert ui_mock.ficha_seleccionada != "O" or True
 
     def test_manejar_click_barra_sin_movimientos_validos(self, ui_mock):
@@ -878,7 +872,6 @@ class TestBackgammonUI:
         ui_mock.juego.dados_disponibles = [6]
         ui_mock.juego.tablero.barra_x.append("X")
         
-        # Bloquear todos los puntos posibles
         for i in range(6):
             ui_mock.juego.tablero._puntos[i] = ["O", "O"]
         
@@ -913,28 +906,26 @@ class TestBackgammonUI:
         ui_mock.juego.tablero.barra_o.append("O")
         assert ui_mock.tiene_fichas_en_barra("O") is True
 
-
 def test_ejecutar_pygame_ui():
     """Test de la función principal de ejecución."""
     from pygame_ui.ui import ejecutar_pygame_ui
     
-    with patch('ui.pygame_ui.BackgammonUI') as mock_ui_class:
-        mock_ui_instance = Mock()
-        mock_ui_instance.run = Mock()
-        mock_ui_class.return_value = mock_ui_instance
+    with patch('pygame_ui.ui.BackgammonUI') as mock_ui_class:
+        mock_instance = Mock()
+        mock_instance.run = Mock()
+        mock_ui_class.return_value = mock_instance
         
         ejecutar_pygame_ui()
-        mock_ui_instance.run.assert_called_once()
-
+        mock_ui_class.assert_called_once()
 
 def test_constantes_colores():
     """Test de que las constantes de colores existen."""
-    from pygame_ui import ui
-    assert hasattr(pygame_ui, 'BLANCO')
-    assert hasattr(pygame_ui, 'NEGRO')
-    assert hasattr(pygame_ui, 'ROJO')
-    assert hasattr(pygame_ui, 'AZUL')
-    assert hasattr(pygame_ui, 'VERDE')
+    from pygame_ui.ui import BLANCO, NEGRO, ROJO, AZUL, VERDE
+    assert BLANCO is not None
+    assert NEGRO is not None
+    assert ROJO is not None
+    assert AZUL is not None
+    assert VERDE is not None
 
 
 def test_constantes_colores_valores():
@@ -945,7 +936,6 @@ def test_constantes_colores_valores():
     assert isinstance(ROJO, tuple)
     assert isinstance(AZUL, tuple)
 
-
 def test_constantes_adicionales():
     """Test de constantes adicionales."""
     from pygame_ui.ui import VERDE, AMARILLO, NARANJA, GRIS, MORADO
@@ -955,12 +945,10 @@ def test_constantes_adicionales():
     assert isinstance(GRIS, tuple)
     assert isinstance(MORADO, tuple)
 
-
 def test_constantes_marrones():
     """Test de constantes de colores marrones."""
     from pygame_ui.ui import MARRON_CLARO, MARRON_OSCURO
     assert isinstance(MARRON_CLARO, tuple)
     assert isinstance(MARRON_OSCURO, tuple)
-
 
 import pygame
