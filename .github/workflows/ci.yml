@@ -84,8 +84,8 @@ jobs:
     
     - name: Verificar calidad de código con flake8
       run: |
-        flake8 core/ cli/ ui/ --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 core/ cli/ ui/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        flake8 core/ cli/ pygame_ui/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 core/ cli/ pygame_ui/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
     - name: Verificar Code Climate
       continue-on-error: true
