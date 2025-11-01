@@ -1,17 +1,72 @@
-# Entorno virtual
-.venv/
-env/
-
-# Cachés de Python
+# Python
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Archivos de cobertura y pytest
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing
+.pytest_cache/
 .coverage
 htmlcov/
-.pytest_cache/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.log
 
-# Archivos de sistema
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 .DS_Store
+
+# Pygame
+*.pyc
+
+# Docker
+.dockerignore
+
+# Code Climate
+.codeclimate.yml
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS
 Thumbs.db
+.DS_Store
+venv/

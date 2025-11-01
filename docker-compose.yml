@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backgammon-game:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backgammon-game
+    volumes:
+      - .:/app
+    stdin_open: true
+    tty: true
+    command: python main.py cli
+
+  backgammon-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: backgammon-test
+    volumes:
+      - .:/app
+    command: pytest --cov=core --cov=cli --cov=ui --cov-report=term-missing -v
+
+  redis:
+    image: redis:7-alpine
+    container_name: backgammon-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
