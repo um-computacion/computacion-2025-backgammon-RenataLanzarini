@@ -1,0 +1,4 @@
+=== RESUMEN DE CALIDAD ===
+Core: 
+CLI: 
+Pygame: pygame_ui/:1:0: F0001: No module named pygame_ui/ (fatal)

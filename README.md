@@ -59,3 +59,15 @@ Esto abre una ventana de pygame con el tablero básico.
 # 5. Correr los tests
 Para validar el código:
 pytest -q
+## 🐳 Ejecución con Docker
+
+### Modo Juego (CLI)
+```bash
+docker build -t backgammon .
+docker run -it backgammon
+```
+
+### Modo Testing
+```bash
+docker-compose up backgammon-tests
+```

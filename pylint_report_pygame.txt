@@ -1,0 +1,2 @@
+************* Module pygame_ui/
+pygame_ui/:1:0: F0001: No module named pygame_ui/ (fatal)

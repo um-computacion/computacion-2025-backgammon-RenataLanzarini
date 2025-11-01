@@ -1,0 +1,27 @@
+[MASTER]
+max-line-length=120
+
+[MESSAGES CONTROL]
+disable=
+    C0114,  # missing-module-docstring
+    C0115,  # missing-class-docstring
+    C0116,  # missing-function-docstring (ya tienes docstrings en lo importante)
+    R0903,  # too-few-public-methods
+    R0904,  # too-many-public-methods (inevitable en juegos)
+    R0911,  # too-many-return-statements
+    R0912,  # too-many-branches (normal en lógica de juego)
+    R1702,  # too-many-nested-blocks
+    W0212,  # protected-access
+    W1309,  # f-string-without-interpolation
+    C0303,  # trailing-whitespace (lo arreglamos después)
+    C0304,  # missing-final-newline (lo arreglamos después)
+    C0305,  # trailing-newlines
+    C0301,  # line-too-long (aumentamos el límite)
+    R1705   # no-else-return
+
+[DESIGN]
+max-attributes=20
+max-args=10
+max-locals=25
+max-branches=20
+max-statements=70

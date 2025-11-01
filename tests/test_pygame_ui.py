@@ -26,7 +26,7 @@ class TestBackgammonUI:
             mock_font_instance.render = MagicMock(return_value=MagicMock())
             mock_font.return_value = mock_font_instance
             
-            from ui.pygame_ui import BackgammonUI
+            from pygame_ui.ui import BackgammonUI
             ui = BackgammonUI()
             ui.screen = mock_screen
             
@@ -916,7 +916,7 @@ class TestBackgammonUI:
 
 def test_ejecutar_pygame_ui():
     """Test de la función principal de ejecución."""
-    from ui.pygame_ui import ejecutar_pygame_ui
+    from pygame_ui.ui import ejecutar_pygame_ui
     
     with patch('ui.pygame_ui.BackgammonUI') as mock_ui_class:
         mock_ui_instance = Mock()
@@ -929,7 +929,7 @@ def test_ejecutar_pygame_ui():
 
 def test_constantes_colores():
     """Test de que las constantes de colores existen."""
-    from ui import pygame_ui
+    from pygame_ui import pygame_ui
     assert hasattr(pygame_ui, 'BLANCO')
     assert hasattr(pygame_ui, 'NEGRO')
     assert hasattr(pygame_ui, 'ROJO')
@@ -939,7 +939,7 @@ def test_constantes_colores():
 
 def test_constantes_colores_valores():
     """Test de valores de constantes."""
-    from ui.pygame_ui import BLANCO, NEGRO, ROJO, AZUL
+    from pygame_ui.ui import BLANCO, NEGRO, ROJO, AZUL
     assert BLANCO == (255, 255, 255)
     assert NEGRO == (0, 0, 0)
     assert isinstance(ROJO, tuple)
@@ -948,7 +948,7 @@ def test_constantes_colores_valores():
 
 def test_constantes_adicionales():
     """Test de constantes adicionales."""
-    from ui.pygame_ui import VERDE, AMARILLO, NARANJA, GRIS, MORADO
+    from pygame_ui.ui import VERDE, AMARILLO, NARANJA, GRIS, MORADO
     assert isinstance(VERDE, tuple)
     assert isinstance(AMARILLO, tuple)
     assert isinstance(NARANJA, tuple)
@@ -958,7 +958,7 @@ def test_constantes_adicionales():
 
 def test_constantes_marrones():
     """Test de constantes de colores marrones."""
-    from ui.pygame_ui import MARRON_CLARO, MARRON_OSCURO
+    from pygame_ui.ui import MARRON_CLARO, MARRON_OSCURO
     assert isinstance(MARRON_CLARO, tuple)
     assert isinstance(MARRON_OSCURO, tuple)
 

@@ -1,9 +1,9 @@
 # 📊 Reporte de Tests y Cobertura
 
-**Fecha:** 2025-10-31 22:37:07
+**Fecha:** 2025-11-01 00:25:24
 **Branch:** 98-ultimas-correcciones
-**Commit:** f2ecdbf8
-**Autor:** RenataLanzarini
+**Commit:** 8a9a1201
+**Autor:** María Renata Lanzarini
 
 ---
 
@@ -303,14 +303,36 @@ tests/test_pygame_ui.py::TestBackgammonUI::test_manejar_click_barra_sin_movimien
 tests/test_pygame_ui.py::TestBackgammonUI::test_manejar_click_punto_sin_dados_disponibles PASSED [ 96%]
 tests/test_pygame_ui.py::TestBackgammonUI::test_obtener_movimientos_validos_con_varios_destinos PASSED [ 96%]
 tests/test_pygame_ui.py::TestBackgammonUI::test_tiene_fichas_en_barra_jugador_o PASSED [ 97%]
-tests/test_pygame_ui.py::test_ejecutar_pygame_ui PASSED                  [ 97%]
-tests/test_pygame_ui.py::test_constantes_colores PASSED                  [ 97%]
+tests/test_pygame_ui.py::test_ejecutar_pygame_ui FAILED                  [ 97%]
+tests/test_pygame_ui.py::test_constantes_colores FAILED                  [ 97%]
 tests/test_pygame_ui.py::test_constantes_colores_valores PASSED          [ 98%]
 tests/test_pygame_ui.py::test_constantes_adicionales PASSED              [ 98%]
 tests/test_pygame_ui.py::test_constantes_marrones PASSED                 [ 98%]
 tests/test_resource.py::test_constantes_colores PASSED                   [ 99%]
 tests/test_resource.py::test_constantes_ventana PASSED                   [ 99%]
 tests/test_resource.py::test_clase_recurso_descripcion PASSED            [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_ejecutar_pygame_ui ____________________________
+tests/test_pygame_ui.py:921: in test_ejecutar_pygame_ui
+    with patch('ui.pygame_ui.BackgammonUI') as mock_ui_class:
+/usr/lib/python3.12/unittest/mock.py:1442: in __enter__
+    self.target = self.getter()
+/usr/lib/python3.12/pkgutil.py:513: in resolve_name
+    mod = importlib.import_module(modname)
+/usr/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1324: in _find_and_load_unlocked
+    ???
+E   ModuleNotFoundError: No module named 'ui'
+___________________________ test_constantes_colores ____________________________
+tests/test_pygame_ui.py:932: in test_constantes_colores
+    from pygame_ui import pygame_ui
+E   ImportError: cannot import name 'pygame_ui' from 'pygame_ui' (/home/renata/repos/computacion-2025-backgammon-RenataLanzarini/pygame_ui/__init__.py)
 
 ---------- coverage: platform linux, python 3.12.3-final-0 -----------
 Name               Stmts   Miss  Cover   Missing
@@ -322,16 +344,18 @@ core/board.py         94      3    97%   137, 139, 162
 core/dice.py          12      0   100%
 core/game.py         178      3    98%   168-169, 250
 core/player.py        12      0   100%
-ui/__init__.py         0      0   100%
-ui/pygame_ui.py      454      7    98%   199, 313, 506, 530-531, 580, 744
 ------------------------------------------------
-TOTAL               1070     43    96%
+TOTAL                616     36    94%
 Coverage HTML written to dir htmlcov
 Coverage XML written to file coverage.xml
 
-Required test coverage of 90% reached. Total coverage: 95.98%
-
-============================= 292 passed in 0.76s ==============================
+Required test coverage of 90% reached. Total coverage: 94.16%
+=========================== short test summary info ============================
+FAILED tests/test_pygame_ui.py::test_ejecutar_pygame_ui - ModuleNotFoundError...
+FAILED tests/test_pygame_ui.py::test_constantes_colores - ImportError: cannot...
+======================== 2 failed, 290 passed in 0.88s =========================
+/home/renata/repos/computacion-2025-backgammon-RenataLanzarini/venv/lib/python3.12/site-packages/coverage/inorout.py:507: CoverageWarning: Module ui was never imported. (module-not-imported)
+  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
 
 ```
 
@@ -340,35 +364,35 @@ Required test coverage of 90% reached. Total coverage: 95.98%
 ## 📈 Cobertura de Código
 
 ```
-tests/test_pygame_ui.py::test_ejecutar_pygame_ui PASSED                  [ 97%]
-tests/test_pygame_ui.py::test_constantes_colores PASSED                  [ 97%]
-tests/test_pygame_ui.py::test_constantes_colores_valores PASSED          [ 98%]
-tests/test_pygame_ui.py::test_constantes_adicionales PASSED              [ 98%]
-tests/test_pygame_ui.py::test_constantes_marrones PASSED                 [ 98%]
-tests/test_resource.py::test_constantes_colores PASSED                   [ 99%]
-tests/test_resource.py::test_constantes_ventana PASSED                   [ 99%]
-tests/test_resource.py::test_clase_recurso_descripcion PASSED            [100%]
+    ???
+E   ModuleNotFoundError: No module named 'ui'
+___________________________ test_constantes_colores ____________________________
+tests/test_pygame_ui.py:932: in test_constantes_colores
+    from pygame_ui import pygame_ui
+E   ImportError: cannot import name 'pygame_ui' from 'pygame_ui' (/home/renata/repos/computacion-2025-backgammon-RenataLanzarini/pygame_ui/__init__.py)
 
 ---------- coverage: platform linux, python 3.12.3-final-0 -----------
 Name               Stmts   Miss  Cover   Missing
 ------------------------------------------------
 cli/__init__.py        0      0   100%
-cli/cli.py           318     35    89%   72, 84, 151, 166-167, 224, 298-299, 325-337, 362-370, 408, 410-411, 413-414, 418, 425, 452-453, 457
+cli/cli.py           318     30    91%   72, 84, 151, 166-167, 224, 298-299, 334-337, 362-370, 408, 410-411, 413-414, 418, 425, 452-453, 457
 core/__init__.py       2      0   100%
 core/board.py         94      3    97%   137, 139, 162
 core/dice.py          12      0   100%
 core/game.py         178      3    98%   168-169, 250
 core/player.py        12      0   100%
-ui/__init__.py         0      0   100%
-ui/pygame_ui.py      454      7    98%   199, 313, 506, 530-531, 580, 744
 ------------------------------------------------
-TOTAL               1070     48    96%
+TOTAL                616     36    94%
 Coverage HTML written to dir htmlcov
 Coverage XML written to file coverage.xml
 
-Required test coverage of 90% reached. Total coverage: 95.51%
-
-============================= 292 passed in 0.79s ==============================
+Required test coverage of 90% reached. Total coverage: 94.16%
+=========================== short test summary info ============================
+FAILED tests/test_pygame_ui.py::test_ejecutar_pygame_ui - ModuleNotFoundError...
+FAILED tests/test_pygame_ui.py::test_constantes_colores - ImportError: cannot...
+======================== 2 failed, 290 passed in 0.79s =========================
+/home/renata/repos/computacion-2025-backgammon-RenataLanzarini/venv/lib/python3.12/site-packages/coverage/inorout.py:507: CoverageWarning: Module ui was never imported. (module-not-imported)
+  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
 
 ```
 
