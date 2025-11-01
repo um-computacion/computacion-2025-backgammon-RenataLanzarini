@@ -929,7 +929,7 @@ def test_ejecutar_pygame_ui():
 
 def test_constantes_colores():
     """Test de que las constantes de colores existen."""
-    from pygame_ui import pygame_ui
+    from pygame_ui import ui
     assert hasattr(pygame_ui, 'BLANCO')
     assert hasattr(pygame_ui, 'NEGRO')
     assert hasattr(pygame_ui, 'ROJO')
