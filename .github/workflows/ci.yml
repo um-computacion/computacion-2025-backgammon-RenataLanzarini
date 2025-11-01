@@ -1,0 +1,115 @@
+name: CI - Tests y Cobertura
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v3
+    
+    - name: Configurar Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Ejecutar tests con coverage
+      run: |
+        pytest --cov=core --cov=cli --cov=ui --cov-report=term --cov-report=xml --cov-report=html -v
+    
+    - name: Generar reporte de cobertura
+      run: |
+        echo "# 📊 Reporte de Tests y Cobertura" > REPORTS.md
+        echo "" >> REPORTS.md
+        echo "**Fecha:** $(date '+%Y-%m-%d %H:%M:%S')" >> REPORTS.md
+        echo "**Branch:** ${{ github.ref_name }}" >> REPORTS.md
+        echo "**Commit:** ${{ github.sha }}" >> REPORTS.md
+        echo "**Autor:** ${{ github.actor }}" >> REPORTS.md
+        echo "" >> REPORTS.md
+        echo "---" >> REPORTS.md
+        echo "" >> REPORTS.md
+        echo "## 🧪 Resultados de Tests" >> REPORTS.md
+        echo "" >> REPORTS.md
+        echo "\`\`\`" >> REPORTS.md
+        pytest --tb=short -v 2>&1 | tee -a REPORTS.md || true
+        echo "\`\`\`" >> REPORTS.md
+        echo "" >> REPORTS.md
+        echo "---" >> REPORTS.md
+        echo "" >> REPORTS.md
+        echo "## 📈 Cobertura de Código" >> REPORTS.md
+        echo "" >> REPORTS.md
+        echo "\`\`\`" >> REPORTS.md
+        pytest --cov=core --cov=cli --cov=ui --cov-report=term-missing 2>&1 | tail -n 30 | tee -a REPORTS.md || true
+        echo "\`\`\`" >> REPORTS.md
+        echo "" >> REPORTS.md
+        echo "---" >> REPORTS.md
+        echo "" >> REPORTS.md
+        echo "## 📄 Archivos de Reporte Generados" >> REPORTS.md
+        echo "" >> REPORTS.md
+        echo "- \`htmlcov/index.html\` - Reporte HTML interactivo" >> REPORTS.md
+        echo "- \`coverage.xml\` - Reporte XML para Codecov" >> REPORTS.md
+        echo "" >> REPORTS.md
+        echo "---" >> REPORTS.md
+        echo "" >> REPORTS.md
+        echo "**Generado automáticamente por GitHub Actions** 🤖" >> REPORTS.md
+    
+    - name: Subir reporte de cobertura a Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: false
+    
+    - name: Commit y push de REPORTS.md
+      if: github.ref == 'refs/heads/main'
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add REPORTS.md
+        git diff --staged --quiet || git commit -m "📊 Actualizar REPORTS.md [skip ci]"
+        git push
+      continue-on-error: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Verificar calidad de código con flake8
+      run: |
+        flake8 core/ cli/ pygame_ui/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 core/ cli/ pygame_ui/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Verificar Code Climate
+      continue-on-error: true
+      run: |
+        echo "✅ Code Climate debe configurarse externamente"
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v3
+    
+    - name: Build Docker image - juego
+      run: docker build -t backgammon:latest .
+    
+    - name: Build Docker image - tests
+      run: docker build -f Dockerfile.test -t backgammon-test:latest .
+    
+    - name: Run tests en Docker
+      run: docker run backgammon-test:latest
+    
+    - name: Verificar tamaño de imágenes
+      run: |
+        echo "📦 Tamaños de imágenes Docker:"
+        docker images | grep backgammon

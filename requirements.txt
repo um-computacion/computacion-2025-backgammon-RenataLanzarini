@@ -1,0 +1,28 @@
+# Testing
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+
+# Juego
+pygame==2.5.2
+
+# Calidad de código
+flake8==6.1.0
+coverage==7.3.2
+pylint==3.0.3
+
+# Redis (opcional - descomentar si se implementa guardado de partidas)
+# redis==5.0.1
+
+# Documentación
+# sphinx==7.2.6
+# sphinx-rtd-theme==2.0.0
+
+# CI/CD y calidad
+# codeclimate-test-reporter==0.2.3
+
+# Desarrollo
+black==23.12.1
+isort==5.13.2
+
+# Python version required: >=3.11
